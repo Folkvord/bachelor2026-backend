@@ -1,4 +1,4 @@
-package no.bachelor26.bachelor26;
+package no.bachelor26;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,6 +8,7 @@ public class Bachelor26Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Bachelor26Application.class, args);
+		System.out.println("--=| BACKEND BE RUNNIN |=--");
 	}
 
 }

@@ -1,1 +1,23 @@
-services: {}
+services:
+  app:
+    build: .
+    ports:
+      - 8000:8080
+    env_file:
+      - .env
+#    depends_on:
+#      - db
+
+
+# DATABASE ORDNE PLS #  
+#  db:
+#    image: xxxx
+#    ports:
+#      - 5432:5432
+#    env_file:
+#      - .env
+#    volumes:
+#      db-data:/var/lib/xxxx
+#
+#volumes:
+#  db-data:  

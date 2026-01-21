@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bachelordb
+    username: sofie
+    password: 5670
+
+  jpa:
+    hibernate:
+      ddl-auto: update

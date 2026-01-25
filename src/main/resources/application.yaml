@@ -1,9 +1,26 @@
 spring:
+  application:
+    name: bachelor26
+
+  # SOFIE: Setter connection info for database
   datasource:
     url: jdbc:postgresql://localhost:5432/bachelordb
     username: sofie
-    password: 5670
+    # SOFIE: passord som miljøvariabel så jeg ikke doxer pinkoden min :D
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
       ddl-auto: update
+    show-sql: true
+
+# SOFIE: Setter port, kan endres
+server:
+  port: 8080
+
+# SOFIE: ØVRIG INFO FOR RAPPORT
+#Sensitiv informasjon som databasepassord lagres ikke direkte i
+#konfigurasjonsfiler, men hentes fra miljøvariabler for å redusere
+#risiko ved deling av kildekode. Miljøvariabelen settes ved
+# ny terminalstart.
+# Kjør "export DB_PASSWORD=PassordJegIkkeErDumNokTilÅSkriveHer"

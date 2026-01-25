@@ -1,0 +1,2 @@
+Kjøre backend: ./mvnw spring-boot:run
+Miljøvariabel, passord som eks: export DB_PASSWORD=PassordJegIkkeErDumNokTilÅSkriveHer

@@ -14,6 +14,8 @@ import no.bachelor26.DTO.RegisterUserDTO;
  * For at API-kallet skal fungere som forventet, kreves det 
  * at JSON-objektet som sendes har alle de samme attributtene
  * som objektet i parameteret. 
+ * 
+ * !!! RETURNERER 501 RN, ENDRE ETTER IMPLEMENTASJON !!!
  */
 
 @RestController
@@ -25,12 +27,13 @@ public class UserController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> postRegister(@RequestBody RegisterUserDTO registrationFormDTO){
+    public ResponseEntity<?> registerUser(@RequestBody RegisterUserDTO registrationFormDTO){
         
         // Kristoffer: Sofies ansvar!!!
         //userService.register(registrationFormDTO);
 
-        return ResponseEntity.ok().build();
+        // Kristoffer: Endre ettersom implementert
+        return ResponseEntity.status(501).build();
 
     }
 

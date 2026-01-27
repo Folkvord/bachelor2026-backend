@@ -5,7 +5,7 @@ spring:
   # SOFIE: Setter connection info for database
   datasource:
     url: jdbc:postgresql://localhost:5432/bachelordb
-    username: sofie
+    username: ${DB_USERNAME}
     # SOFIE: passord som miljøvariabel så jeg ikke doxer pinkoden min :D
     password: ${DB_PASSWORD}
 

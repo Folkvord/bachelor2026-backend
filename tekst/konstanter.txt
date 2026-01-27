@@ -1,0 +1,8 @@
+
+
+Port 8080
+Navn bahcelor26
+???
+
+xml = Extensible Markup Language: 
+det som sier noe om hvordan maskinen skal behandle og forvente data

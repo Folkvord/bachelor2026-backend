@@ -1,2 +1,5 @@
 Kjøre backend: ./mvnw spring-boot:run
 Miljøvariabel, passord som eks: export DB_PASSWORD=PassordJegIkkeErDumNokTilÅSkriveHer
+
+Hent logger-objekt: 
+private static final Logger logger = LoggerFactory.getLogger(**klassenavnet på klassen din**.class);

@@ -34,3 +34,5 @@ build/
 
 # Eget :)
 .env
+logs/
+*.log

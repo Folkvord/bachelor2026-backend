@@ -1,0 +1,17 @@
+
+SPRÅK:
+
+Funksjonsnavn, gitbranches og filnavn skal være på ENGELSK.
+Kommentarer skal være på NORSK. 
+
+
+KOMMENTARER:
+
+Startes med formatet "NAVN: kommentar".
+Skal være beskrivende, slik at andre kan forstå.
+Ikke skrevet av chat. 
+
+KODE: 
+
+Simpel kode som funker. 
+Skal kunne utbedres og videreutvikles der nødvendig. 

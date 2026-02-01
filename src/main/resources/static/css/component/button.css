@@ -1,0 +1,8 @@
+.default-btn{
+    font-family: var(--second-font);
+    background-color: var(--button-color-main);
+    border-color: var(--button-color-border);
+}
+.default-btn button:active{
+    background-color: var(--button-color-click);
+}

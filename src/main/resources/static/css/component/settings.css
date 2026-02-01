@@ -1,0 +1,73 @@
+.settings-menu{
+    display: flex;
+    flex-direction: row;
+    padding: 5px;
+    gap: 5px;
+}
+.settings-menu button{
+    font-family: var(--second-font);
+    background-color: var(--button-color-main);
+    border-color: var(--button-color-border);
+    width: 125px;
+    border-radius: 5px;
+    padding: 4px;
+}
+.settings-btn-list button:active{
+    background-color: var(--button-color-click);
+}
+
+.settings{
+    display: none;
+    padding: 5px;
+}
+.settings.active{
+    display: flex;
+    flex-direction: column;
+    max-width: 35%;
+    gap: 5px;
+}
+
+.settings-entity{
+    display: flex;
+    flex-direction: column;
+    font-family: var(--second-font);
+    padding: 5px 0 0 0;
+}
+.settings-entity input[type=text]{
+    font-family: var(--second-font);
+    margin: 5px 0 0 5px;
+}
+.settings-entity select{
+    font-family: var(--second-font);
+    margin: 5px 0 0 5px;
+}
+.settings-entity-list{
+    display: grid;
+    grid-template-rows: auto auto;
+    grid-template-columns: auto auto;
+}
+.settings-checkbox{
+    display: flex;
+    width: 6rem;
+}
+.settings-checkbox input{
+    margin-left: auto;
+}
+
+.settings-buttonfield{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    padding: 5px;
+    gap: 5px;
+}
+.settings-buttonfield button{
+    width: 6rem;
+    height: 1.5rem;
+    border-radius: 5px;
+    font-family: var(--second-font);
+    background-color: var(--button-color-main);
+    border-color: var(--button-color-border);
+}
+.settings-buttonfield button:active{
+    background-color: var(--button-color-click);
+}

@@ -1,3 +1,10 @@
+@import url("vars.css");
+
+@import url("component/title.css");
+@import url("component/button.css");
+@import url("component/settings.css");
+
+
 *{
-    background-color: blueviolet;
-}
+/*     background-color: blueviolet;
+ */}

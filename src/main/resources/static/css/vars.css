@@ -1,0 +1,13 @@
+*{
+    /* Fonter */
+    --main-font: Tahoma, sans-serif;
+    --second-font: Arial, sans-serif;
+
+    --title-main-color: #dfdfdf;
+    --title-bg-color: #2c5ab1;
+
+    --button-color-main: #dddddd;
+    --button-color-click: #c0c0c0;
+    --button-color-border: #afafaf;
+
+}

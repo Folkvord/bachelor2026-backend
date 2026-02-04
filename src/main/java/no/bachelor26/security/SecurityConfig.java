@@ -22,9 +22,11 @@ public class SecurityConfig {
                 .csrf(crsf -> crsf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/actuator/health").permitAll()
+                        .requestMatchers("/").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         //admin område
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
 
                         .anyRequest().authenticated()
                 )

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>drithemmelig debugside</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/page/index.css">
+        <script src="js/index.js" defer></script>
+    </head>
+
+    <body>
+        
+        <!-- Tittel -->
+        <div class="title-card">
+            <h1>Megahemmelig side for debugging</h1>
+        </div>
+
+        <!-- Innhold -->
+        <div class="content-main">
+
+            <!-- Innstillinger & JSON -->
+            <div class="content-left">
+
+                <!-- Innstillinger -->
+                <div class="settings-holder">
+                    
+                    <h2 class="minor-title">Test innstillinger</h2>
+
+                    <div class="settings-menu">
+                        <button onclick="showSettings('user')">Hent bruker</button>
+                        <button onclick="showSettings('api')">Test API</button>
+                    </div>
+
+                    <div class="settings-main">
+                        
+                            <div class="settings-entity">
+                                <label for="">Hent gruppe med brukere:</label>
+                                <div class="settings-buttonfield">
+                                    <button id="user-get-all">Alle</button>
+                                    <button id="user-get-admins">Adminer</button>
+                                    <button id="user-get-banned">Bannlyste</button>
+                                    <button id="user-get-active">Aktive</button>
+                                    <button id="user-get-inactive">Innaktive</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Test API -->
+                        <div id="api" class="settings">
+
+                            <div class="settings-entity">
+                                <label>Endepunkt:</label>
+                                <input id="api-endpoint" type="text">
+                            </div>
+
+                            <div class="settings-entity">
+                                <label>Metode:</label>
+                                <select id="api-method">
+                                    <option value="get">Get</option>
+                                    <option value="post">Post</option>
+                                    <option value="put">Put</option>
+                                    <option value="delete">Delete</option>
+                                </select>
+                            </div>
+
+                            <div class="settings-buttonfield">
+                                <button>Send</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- JSON -->
+                <div class="json-content">
+                    <p>LIL >:)</p>
+                </div>
+
+            </div>
+
+            <!-- Brukerliste -->
+            <div class="content-centre">
+                <p>LYL :(</p>
+            </div>
+
+            <!-- Chief keef -->
+            <div class="content-right">
+                <img src="img/GBE.png" alt="cheif-keef">
+                <a href="https://www.youtube.com/watch?v=oHg5SJYRHA0&list=RDoHg5SJYRHA0">Klikk for shopping og grafikkort</a>
+                <a href="https://pokemondb.net/pokedex/farfetchd"><img src="https://img.pokemondb.net/sprites/black-white/normal/farfetchd.png" alt="Farfetch'd"></a>
+            </div>
+        
+        </div>
+
+
+    </body>
+
+</html>

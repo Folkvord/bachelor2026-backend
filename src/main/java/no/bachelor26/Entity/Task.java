@@ -13,12 +13,12 @@ import lombok.Data;
 public class Task {
     
     @Id
-    private String name;
+    private Long id;
 
+    private String name;
     private String description;
 
-    //@JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb")
-    private String taskJSON;
+    private String task;
 
 }

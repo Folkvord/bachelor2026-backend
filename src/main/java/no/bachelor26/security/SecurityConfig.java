@@ -15,9 +15,10 @@ public class SecurityConfig {
         http
                 .csrf(crsf -> crsf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                    .anyRequest().permitAll()               // MIDLERTIDIG FOR DEV; SLETT FØR PROD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        //.requestMatchers("/actuator/health").permitAll()
+                        //.requestMatchers("/api/auth/**").permitAll()
+                        //.anyRequest().authenticated()
                 )
                 // midlertidig enkel autentisering
                 .httpBasic(httpBasic -> {});

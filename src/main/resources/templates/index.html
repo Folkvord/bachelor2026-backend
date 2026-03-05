@@ -1,19 +1,85 @@
 <!DOCTYPE html>
 <html>
 
-    <head>
-        <title>drithemmelig debugside</title>
-        <meta charset="utf-8">
-        <link rel="stylesheet" href="css/main.css">
-    </head>
+<head>
+    <title>Oppgave editor</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/main.js" defer></script>
+</head>
 
-    <body>
+<body>
+    
+    <div class="container">
+
+        <div class="editor">
+
+            <h2>Oppgave Editor</h2>
+
+            <label>Navn</label>
+            <br>
+            <input id="nameField" class="name" placeholder="Navn">
+            <br>
+            <label>Beskrivelse</label>
+            <textarea class="description" id="descriptionField" rows="3" placeholder="Beskrivelse"></textarea>
+
+            <label>Oppgave</label>
+            <textarea id="jsonInput">
+{
+    "objects": {
+
+    },
+    "keyEvents": {
+        "task-start": {
+            "cmd": [
+
+            ]
+        },
+        "correct-flag-submit": {
+            "cmd": [
+
+            ]
+        },
+        "wrong-flag-submit": {
+            "cmd": [
+
+            ]
+        }
+    },
+    "triggers": [
+
+    ],
+    "details": {
+
+    }
+}
+</textarea>
+
+            <br>
+
+            <button onclick="format()">Formatter</button>
+            <button onclick="validate()">Valider</button>
+            <button onclick="save()">Lagre</button>
+
+            <div id="result"></div>
+
+    </div>
+
+
+        <div class="sidebar">
         
-        <h1>megahemmelig side for debugging</h1>
+            <h3>Last inn oppgave</h3>
+            
+            <input id="searchName" placeholder="Oppgavenavn">
+            
+            <button onclick="loadTask()">Last inn</button>
+            
+            <div id="searchStatus"></div>
+        
+        </div>
 
-        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ"
-        style="color: black;">klikk for shopping & grafikkort</a>
+    </div>
 
-    </body>
+</body>
 
 </html>

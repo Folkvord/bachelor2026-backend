@@ -21,13 +21,19 @@ public class TaskService {
     TaskRepository taskRepo;
 
 
-    public JsonNode getTaskByName(String name){
+    public JsonNode getTaskJSONByName(String name){
         Task task = taskRepo.findByName(name).orElseThrow(
             () -> new TaskNotFoundException(name)
         );
-        return convertToJsonNode(task.getTaskJSON());
+        return convertToJsonNode(task.getTask());
     }
 
+
+    public Task getTaskForEdit(String name){
+        return taskRepo.findByName(name).orElseThrow(
+            () -> new TaskNotFoundException(name)
+        );
+    }
 
     // Ment for å konvertere selve oppgaven fra en string til JSON
     private JsonNode convertToJsonNode(String str){

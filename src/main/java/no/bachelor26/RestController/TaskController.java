@@ -1,4 +1,4 @@
-package no.bachelor26.Controller;
+package no.bachelor26.RestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

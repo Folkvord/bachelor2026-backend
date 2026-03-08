@@ -26,12 +26,14 @@ public class TaskService {
     }
 
 
+
+
+
     public void grantTaskAccess(User user, Long taskID){
-
         
-
     }
 
+    
     // Ment for å konvertere selve oppgaven fra en string til JSON
     private JsonNode convertToJsonNode(String str){
         return new ObjectMapper().readTree(str);

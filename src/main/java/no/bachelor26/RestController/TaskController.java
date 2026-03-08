@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import no.bachelor26.Entity.Task;
 import no.bachelor26.Service.TaskService;
 import tools.jackson.databind.JsonNode;
 
@@ -25,10 +24,6 @@ public class TaskController {
     }
 
 
-    @GetMapping("/edit/{name}")
-    public Task getTaskForEdit(@PathVariable String name){
-        return taskService.getTaskForEdit(name);
-    }
 
 
 }

@@ -3,6 +3,7 @@ package no.bachelor26.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import no.bachelor26.Entity.AvailableTask;
 import no.bachelor26.Entity.Task;
 import no.bachelor26.Entity.User;
 import no.bachelor26.Exception.TaskNotFoundException;
@@ -29,8 +30,25 @@ public class TaskService {
 
 
 
+    /**
+     * Gir en bruker tilgang til en oppgave
+     * 
+     * @param user Brukeren som skal få tilgang
+     * @param taskID ID-en til oppgaven brukeren skal få tilgang til
+     * @throws TaskNotFoundException
+     * @author Kristoffer Folkvord
+    */
     public void grantTaskAccess(User user, Long taskID){
         
+        AvailableTask availableTaskToken = new AvailableTask();
+        availableTaskToken.setUser(user);
+
+        Task task = taskRepo.findById(taskID).orElseThrow(
+            () -> new TaskNotFoundException(taskID)
+        );
+
+        availableTaskToken.setTask(task);
+
     }
 
     

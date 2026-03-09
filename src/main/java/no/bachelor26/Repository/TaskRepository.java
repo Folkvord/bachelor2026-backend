@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import no.bachelor26.Entity.Task;
 
-public interface TaskRepository extends JpaRepository<Task, String>{
+public interface TaskRepository extends JpaRepository<Task, Long>{
 
     Optional<Task> findByName(String name);
 

@@ -5,56 +5,60 @@ import no.bachelor26.Exception.EmailInUseException;
 import no.bachelor26.Exception.UsernameTakenException;
 import no.bachelor26.Repository.UserRepository;
 
-import java.beans.Encoder;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
     @Autowired
-    UserRepository userRepository;
+    UserRepository userRepo;
 
     @Autowired
-    PasswordEncoder encoder;
+    TaskService taskService;
+
+    //@Autowired
+    //PasswordEncoder encoder;
 
 
-    public User createUser(User user) {
-        if (userRepository.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Email already in use");
-        }
-        if (userRepository.existsByUsername(user.getUsername())) {
-            throw new IllegalArgumentException("Username already in use");
-        }
-        return userRepository.save(user);
+    public User getUserFromId(UUID userID){
+        return userRepo.findById(userID).orElseThrow(
+            () -> new UsernameNotFoundException(userID.toString())
+        );
     }
+
 
     public void registerUser(String username, String password, String email){
 
-        if (userRepository.existsByUsername(username)) {
+        if (userRepo.existsByUsername(username)) {
             throw new UsernameTakenException(username);
         }
-        if (userRepository.existsByEmail(email)) {
+        if (userRepo.existsByEmail(email)) {
             throw new EmailInUseException(email);
         }
 
         User user = new User();
         user.setUsername(username);
-        user.setPasswordHash(encoder.encode(password));
-        
+        //user.setPasswordHash(encoder.encode(password));
         // HUSK Å BEKREFT EPOSTEN!!!!
         user.setEmail(email);
 
-        
+        grantUserIntroTasks(user);
 
     }
 
 
-    private void grantNewUserIntroTasks(User user){
+    // Gir en bruker tilgang til de 9 introoppgavene
+    private void grantUserIntroTasks(User user){
 
-        
+        for(int i = 1; i <= 9; i++){
+            Long taskID = Long.valueOf(i);
+            taskService.grantTaskAccess(user, taskID);
+        }
 
     }
 

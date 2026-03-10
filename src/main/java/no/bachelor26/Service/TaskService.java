@@ -27,11 +27,24 @@ public class TaskService {
     }
 
 
+    /**
+     * Henter innholdet til en oppgave.
+     * 
+     * @param id ID-en til oppgaven som skal hentes
+     * @return Innholdet
+     * @author Kristoffer Folkvord
+     */
+    public JsonNode getTaskContentById(Long id){
+        String jsonString = taskRepo.findTaskContentById(id).orElseThrow(
+            () -> new TaskNotFoundException(id.toString())
+        );
+        return convertToJsonNode(jsonString);
+    }
 
 
 
     /**
-     * Gir en bruker tilgang til en oppgave
+     * Gir en bruker tilgang til en oppgave.
      * 
      * @param user Brukeren som skal få tilgang
      * @param taskID ID-en til oppgaven brukeren skal få tilgang til

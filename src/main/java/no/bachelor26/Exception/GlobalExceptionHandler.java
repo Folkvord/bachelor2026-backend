@@ -41,4 +41,15 @@ public class GlobalExceptionHandler {
             ));
     }
 
+
+    // Når en bruker ikke har tilgang til en oppgave
+    @ExceptionHandler(NoTaskAccessException.class)
+    public ResponseEntity<?> handleNoTaskAccess(NoTaskAccessException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(Map.of(
+                "Error", "No task access",
+                "msg", ex.getMessage()
+            ));
+    }
+
 }

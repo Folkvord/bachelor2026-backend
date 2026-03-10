@@ -16,28 +16,30 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleTaskNotFound(TaskNotFoundException ex){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
             .body(Map.of(
-                "error", "NOT-FOUND",
-                "msg", ex.getMessage()
+                "cause", "Task not found",
+                "desc", ex.getMessage()
             ));
     }
+
 
     // Når et brukernavn er i bruk
     @ExceptionHandler(UsernameTakenException.class)
     public ResponseEntity<?> handleUsernameTaken(UsernameTakenException ex){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(Map.of(
-                "Error", "Taken",
-                "msg", ex.getMessage()
+                "cause", "Username taken",
+                "desc", ex.getMessage()
             ));
     }
+
 
     // Når en epost er i bruk
     @ExceptionHandler(EmailInUseException.class)
     public ResponseEntity<?> handleEmailInUse(EmailInUseException ex){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(Map.of(
-                "Error", "In use",
-                "msg", ex.getMessage()
+                "cause", "Email in use",
+                "desc", ex.getMessage()
             ));
     }
 
@@ -45,10 +47,21 @@ public class GlobalExceptionHandler {
     // Når en bruker ikke har tilgang til en oppgave
     @ExceptionHandler(NoTaskAccessException.class)
     public ResponseEntity<?> handleNoTaskAccess(NoTaskAccessException ex){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
             .body(Map.of(
-                "Error", "No task access",
-                "msg", ex.getMessage()
+                "cause", "No task access",
+                "desc", ex.getMessage()
+            ));
+    }
+
+
+    // Når en bruker ikke har tilgang til en oppgave
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of(
+                "cause", "Bad arguments",
+                "desc", ex.getMessage()
             ));
     }
 

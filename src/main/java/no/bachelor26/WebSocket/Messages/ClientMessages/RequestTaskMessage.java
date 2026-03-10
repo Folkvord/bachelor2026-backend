@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class RequestTaskMessage {
+public class RequestTaskMessage extends ClientMessage{
 
     private Long taskID;
 

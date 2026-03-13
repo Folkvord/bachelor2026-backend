@@ -7,7 +7,7 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 @Data
-public class ServerMessage {
+public class GameMessage {
     
     @Autowired
     ObjectMapper objectMapper;
@@ -17,7 +17,7 @@ public class ServerMessage {
     private JsonNode data;
     
 
-    public ServerMessage(String type){
+    public GameMessage(String type){
         this.type = type;
     }
 

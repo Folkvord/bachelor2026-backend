@@ -2,7 +2,6 @@ package no.bachelor26.WebSocket;
 
 import java.util.UUID;
 
-import org.apache.catalina.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,6 @@ import no.bachelor26.Service.AvailableTaskService;
 import no.bachelor26.Service.TaskService;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.exc.JsonNodeException;
-import tools.jackson.databind.node.ObjectNode;
-
 
 @Component
 public class GameHandler extends TextWebSocketHandler {
@@ -35,8 +31,6 @@ public class GameHandler extends TextWebSocketHandler {
 
     @Autowired
     TaskService taskService;
-
-    private final String ERRORMSG = "Unknown error";
 
 
     @Override

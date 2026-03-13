@@ -52,6 +52,7 @@ public class GameHandler extends TextWebSocketHandler {
     }
     
 
+
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> msg) throws Exception{
 
@@ -67,7 +68,7 @@ public class GameHandler extends TextWebSocketHandler {
                 break;
 
             case "task":
-                respondToTaskRequest(session, clientMessage.getData());
+                respondToTask(session, clientMessage.getData());
                 break;
 
             case "validate-flag":
@@ -85,7 +86,7 @@ public class GameHandler extends TextWebSocketHandler {
 
 
     /**
-     * Sender klienten en liste med informasjonen over de tilgjengelige opppgavene.
+     * API-et for henting av oppgaveinformasjon.
      * 
      * @param session WebSocket-sesjonsobjekt
      * @throws Exception
@@ -113,14 +114,14 @@ public class GameHandler extends TextWebSocketHandler {
 
 
     /**
-     * Sender klienten oppgaven dersom brukeren har tilgang.
+     * API-et for å hente innholdet til en oppgave.
      * 
      * @param session WebSocket-sesjonsobjekt
      * @param clientMessage Klientmeldingen
      * @throws Exception
      * @author Kristoffer Folkvord
      */
-    private void respondToTaskRequest(WebSocketSession session, JsonNode data) throws Exception{
+    private void respondToTask(WebSocketSession session, JsonNode data) throws Exception{
         GameMessage reply = new GameMessage("task");
 
         // Sjekk om noe fandango har skjedd med brukerID-en
@@ -193,5 +194,6 @@ public class GameHandler extends TextWebSocketHandler {
         );
         send(session, errMsg);
     }
+
 
 }

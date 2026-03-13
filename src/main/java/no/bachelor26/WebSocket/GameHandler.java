@@ -2,7 +2,6 @@ package no.bachelor26.WebSocket;
 
 import java.util.UUID;
 
-import org.apache.catalina.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +12,11 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import no.bachelor26.Exception.TaskNotFoundException;
 import no.bachelor26.Service.AvailableTaskService;
 import no.bachelor26.Service.TaskService;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.exc.JsonNodeException;
-import tools.jackson.databind.node.ObjectNode;
-
 
 @Component
 public class GameHandler extends TextWebSocketHandler {
@@ -35,8 +32,6 @@ public class GameHandler extends TextWebSocketHandler {
     @Autowired
     TaskService taskService;
 
-    private final String ERRORMSG = "Unknown error";
-
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session){
@@ -51,13 +46,14 @@ public class GameHandler extends TextWebSocketHandler {
     }
     
 
+
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> msg) throws Exception{
 
         log.info("Klient sendte medling");
 
         String payload = msg.getPayload().toString();
-        ClientMessage clientMessage = objectMapper.readValue(payload, ClientMessage.class);
+        GameMessage clientMessage = objectMapper.readValue(payload, GameMessage.class);
 
         switch(clientMessage.getType()){
 
@@ -66,7 +62,7 @@ public class GameHandler extends TextWebSocketHandler {
                 break;
 
             case "task":
-                respondToTaskRequest(session, clientMessage.getData());
+                respondToTask(session, clientMessage.getData());
                 break;
 
             case "validate-flag":
@@ -75,7 +71,7 @@ public class GameHandler extends TextWebSocketHandler {
 
             default:
                 log.warn("wtf STYGG melding incoming");
-                session.sendMessage(new TextMessage(ERRORMSG));
+                sendError(session, new GameMessage(clientMessage.getType()), "invalid type");
                 break;
 
         }
@@ -84,18 +80,19 @@ public class GameHandler extends TextWebSocketHandler {
 
 
     /**
-     * Sender klienten en liste med informasjonen over de tilgjengelige opppgavene.
+     * API-et for henting av oppgaveinformasjon.
      * 
      * @param session WebSocket-sesjonsobjekt
      * @throws Exception
      * @author Kristoffer Folkvord
      */
     private void respondToTaskInfo(WebSocketSession session) throws Exception{
-        ServerMessage reply = new ServerMessage("task-info");
+        GameMessage reply = new GameMessage("task-info");
         
         UUID userID = (UUID) UUID.fromString((String) session.getAttributes().get("userID"));   // Midlertidig spaghetti
         if(userID == null){
-            //sendError(reply, "no userID");
+            sendError(session, reply, "no userID");
+            return;
         }
         
         reply.setStatus("success");
@@ -105,73 +102,68 @@ public class GameHandler extends TextWebSocketHandler {
             )
         );
         
-        session.sendMessage(new TextMessage(
-            objectMapper.writeValueAsString(
-                reply
-            )
-        ));
+        send(session, reply);
 
     }
 
 
     /**
-     * Sender klienten oppgaven dersom brukeren har tilgang.
+     * API-et for å hente innholdet til en oppgave.
      * 
      * @param session WebSocket-sesjonsobjekt
      * @param clientMessage Klientmeldingen
      * @throws Exception
      * @author Kristoffer Folkvord
      */
-    private void respondToTaskRequest(WebSocketSession session, JsonNode data) throws Exception{
-        ServerMessage reply = new ServerMessage("task");
+    private void respondToTask(WebSocketSession session, JsonNode data) throws Exception{
+        GameMessage reply = new GameMessage("task");
 
         // Sjekk om noe fandango har skjedd med brukerID-en
         UUID userID = UUID.fromString((String) session.getAttributes().get("userID"));   // Midlertidig spaghetti
         if(userID == null){
-            //sendError(reply, "no userID");
+            sendError(session, reply, "no userID");
+            return;
         }
 
         // Er innholdet ikke en long?
         JsonNode content = data.get("taskID");
-        if(!content.isLong()){
-            //sendError(reply, "invalid content");
+        if(!content.canConvertToLong()){
+            sendError(session, reply, "invalid content");
+            return;
         }
 
         Long taskID = content.asLong();
 
         // Har brukeren tilgang til oppgaven?
         if(!availableTaskService.userHasAccessToTask(userID, taskID)){
-            reply.setStatus("success");
-            reply.setData(taskService.getTaskContentById(taskID));
-        }
-        else{
-            reply.setStatus("error");
-            reply.setData(prepareErrorMessage("no access"));
+            sendError(session, reply, "no access");
+            return;
         }
         
-        //send(session, reply);
-        session.sendMessage(new TextMessage(
-            objectMapper.writeValueAsBytes(
-                reply
-            )
-        ));
+        // Oppgaven finnes ikke sant?
+        try{
+            JsonNode taskContent = taskService.getTaskContentById(taskID);
+            reply.setData(taskContent);
+        } catch(TaskNotFoundException e){
+            sendError(session, reply, "no access");
+            return;
+        }
 
+        reply.setStatus("success");
+        send(session, reply);
+        
     }
 
 
     /**
-     * Gjør klar en objectNode som inneholder en feilmelding
+     * Sender en melding til klienten.
      * 
-     * @param msg Feilmeldingen
-     * @return ObjectNode med feilmeldingen
+     * @param session WebSocket-sesjonsobjekt
+     * @param msg GameMessage-meldingen som sendes
+     * @throws Exception
+     * @author Kristoffer Folkvord
      */
-    private ObjectNode prepareErrorMessage(String msg){
-        return objectMapper.createObjectNode()
-            .put("error", msg);
-    }
-
-
-    private void send(WebSocketSession session, ServerMessage msg) throws Exception{
+    private void send(WebSocketSession session, GameMessage msg) throws Exception{
         session.sendMessage(new TextMessage(
             objectMapper.writeValueAsBytes(
                 msg
@@ -179,12 +171,23 @@ public class GameHandler extends TextWebSocketHandler {
         ));
     }
 
-    private void sendError(WebSocketSession session, ServerMessage errMsg, String errDesc) throws Exception{
+
+    /**
+     * Sender en feilmelding til klienten.
+     * 
+     * @param session WebSocket-sesjonsobjekt
+     * @param errMsg GameMessage-meldingen som sendes
+     * @param errDesc En beskrivelse av feilen
+     * @throws Exception
+     * @author Kristoffer Folkvord
+     */
+    private void sendError(WebSocketSession session, GameMessage errMsg, String errDesc) throws Exception{
         errMsg.setStatus("error");
         errMsg.setData(
-            objectMapper.readTree(errDesc)
+            objectMapper.readTree("{\"desc\":\"" + errDesc + "\"}")
         );
         send(session, errMsg);
     }
+
 
 }

@@ -2,6 +2,7 @@ package no.bachelor26.WebSocket;
 
 import java.util.UUID;
 
+import org.apache.catalina.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import no.bachelor26.Service.AvailableTaskService;
 import no.bachelor26.Service.TaskService;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.JsonNodeException;
 import tools.jackson.databind.node.ObjectNode;
 
 
@@ -89,11 +91,13 @@ public class GameHandler extends TextWebSocketHandler {
      * @author Kristoffer Folkvord
      */
     private void respondToTaskInfo(WebSocketSession session) throws Exception{
+        ServerMessage reply = new ServerMessage("task-info");
         
         UUID userID = (UUID) UUID.fromString((String) session.getAttributes().get("userID"));   // Midlertidig spaghetti
-        ServerMessage reply = new ServerMessage();
-
-        reply.setType("task-info");
+        if(userID == null){
+            //sendError(reply, "no userID");
+        }
+        
         reply.setStatus("success");
         reply.setData(
             objectMapper.valueToTree(
@@ -119,23 +123,33 @@ public class GameHandler extends TextWebSocketHandler {
      * @author Kristoffer Folkvord
      */
     private void respondToTaskRequest(WebSocketSession session, JsonNode data) throws Exception{
+        ServerMessage reply = new ServerMessage("task");
 
+        // Sjekk om noe fandango har skjedd med brukerID-en
         UUID userID = UUID.fromString((String) session.getAttributes().get("userID"));   // Midlertidig spaghetti
-        Long taskID = data.get("taskID").asLong();
-        ServerMessage reply = new ServerMessage();
+        if(userID == null){
+            //sendError(reply, "no userID");
+        }
 
-        reply.setType("task");
+        // Er innholdet ikke en long?
+        JsonNode content = data.get("taskID");
+        if(!content.isLong()){
+            //sendError(reply, "invalid content");
+        }
+
+        Long taskID = content.asLong();
 
         // Har brukeren tilgang til oppgaven?
-        if(availableTaskService.userHasAccessToTask(userID, taskID)){
+        if(!availableTaskService.userHasAccessToTask(userID, taskID)){
             reply.setStatus("success");
             reply.setData(taskService.getTaskContentById(taskID));
         }
         else{
             reply.setStatus("error");
-            reply.setData(prepareErrorMessage("no-access"));
+            reply.setData(prepareErrorMessage("no access"));
         }
         
+        //send(session, reply);
         session.sendMessage(new TextMessage(
             objectMapper.writeValueAsBytes(
                 reply
@@ -154,6 +168,23 @@ public class GameHandler extends TextWebSocketHandler {
     private ObjectNode prepareErrorMessage(String msg){
         return objectMapper.createObjectNode()
             .put("error", msg);
+    }
+
+
+    private void send(WebSocketSession session, ServerMessage msg) throws Exception{
+        session.sendMessage(new TextMessage(
+            objectMapper.writeValueAsBytes(
+                msg
+            )
+        ));
+    }
+
+    private void sendError(WebSocketSession session, ServerMessage errMsg, String errDesc) throws Exception{
+        errMsg.setStatus("error");
+        errMsg.setData(
+            objectMapper.readTree(errDesc)
+        );
+        send(session, errMsg);
     }
 
 }

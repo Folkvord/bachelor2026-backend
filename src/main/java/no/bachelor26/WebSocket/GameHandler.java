@@ -1,6 +1,5 @@
 package no.bachelor26.WebSocket;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -13,13 +12,11 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import no.bachelor26.Exception.NoTaskAccessException;
-import no.bachelor26.Projection.TaskInfo;
 import no.bachelor26.Service.AvailableTaskService;
 import no.bachelor26.Service.TaskService;
-import no.bachelor26.WebSocket.Messages.ClientMessages.ClientMessage;
-import no.bachelor26.WebSocket.Messages.ClientMessages.RequestTaskMessage;
+import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 
 @Component
@@ -42,6 +39,7 @@ public class GameHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session){
         log.info("Klient tilkoblet");
+        session.getAttributes().put("userID", "332a4d65-2a84-423b-be83-53bc6d24f2e8");      // Alle er meg rn
     }
 
 
@@ -66,7 +64,7 @@ public class GameHandler extends TextWebSocketHandler {
                 break;
 
             case "task":
-                respondToTaskRequest(session, clientMessage);
+                respondToTaskRequest(session, clientMessage.getData());
                 break;
 
             case "validate-flag":
@@ -92,12 +90,20 @@ public class GameHandler extends TextWebSocketHandler {
      */
     private void respondToTaskInfo(WebSocketSession session) throws Exception{
         
-        UUID userID = (UUID) session.getAttributes().get("userID");
-        List<TaskInfo> taskInfo = availableTaskService.getAvailableTaskInfo(userID);
+        UUID userID = (UUID) UUID.fromString((String) session.getAttributes().get("userID"));   // Midlertidig spaghetti
+        ServerMessage reply = new ServerMessage();
+
+        reply.setType("task-info");
+        reply.setStatus("success");
+        reply.setData(
+            objectMapper.valueToTree(
+                availableTaskService.getAvailableTaskInfo(userID)
+            )
+        );
         
         session.sendMessage(new TextMessage(
-            objectMapper.writeValueAsBytes(
-                taskInfo
+            objectMapper.writeValueAsString(
+                reply
             )
         ));
 
@@ -112,21 +118,42 @@ public class GameHandler extends TextWebSocketHandler {
      * @throws Exception
      * @author Kristoffer Folkvord
      */
-    private void respondToTaskRequest(WebSocketSession session, ClientMessage clientMessage) throws Exception{
+    private void respondToTaskRequest(WebSocketSession session, JsonNode data) throws Exception{
 
-        UUID userID = (UUID) session.getAttributes().get("userID");
-        Long taskID = ((RequestTaskMessage) clientMessage).getTaskID();
-        
-        if(!availableTaskService.userHasAccessToTask(userID, taskID)){
-            throw new NoTaskAccessException(userID.toString(), taskID.toString());
+        UUID userID = UUID.fromString((String) session.getAttributes().get("userID"));   // Midlertidig spaghetti
+        Long taskID = data.get("taskID").asLong();
+        ServerMessage reply = new ServerMessage();
+
+        reply.setType("task");
+
+        // Har brukeren tilgang til oppgaven?
+        if(availableTaskService.userHasAccessToTask(userID, taskID)){
+            reply.setStatus("success");
+            reply.setData(taskService.getTaskContentById(taskID));
         }
-
+        else{
+            reply.setStatus("error");
+            reply.setData(prepareErrorMessage("no-access"));
+        }
+        
         session.sendMessage(new TextMessage(
             objectMapper.writeValueAsBytes(
-                taskService.getTaskContentById(taskID)
+                reply
             )
         ));
 
+    }
+
+
+    /**
+     * Gjør klar en objectNode som inneholder en feilmelding
+     * 
+     * @param msg Feilmeldingen
+     * @return ObjectNode med feilmeldingen
+     */
+    private ObjectNode prepareErrorMessage(String msg){
+        return objectMapper.createObjectNode()
+            .put("error", msg);
     }
 
 }

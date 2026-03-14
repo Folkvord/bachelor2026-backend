@@ -19,14 +19,6 @@ public class TaskService {
     TaskRepository taskRepo;
 
 
-    public JsonNode getTaskJSONByName(String name){
-        Task task = taskRepo.findByName(name).orElseThrow(
-            () -> new TaskNotFoundException(name)
-        );
-        return convertToJsonNode(task.getTask());
-    }
-
-
     /**
      * Henter innholdet til en oppgave.
      * 
@@ -40,7 +32,6 @@ public class TaskService {
         );
         return convertToJsonNode(jsonString);
     }
-
 
 
     /**

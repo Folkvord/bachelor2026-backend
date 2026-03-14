@@ -18,9 +18,9 @@ public class TaskController {
     TaskService taskService;
 
 
-    @GetMapping("/{name}")
-    public ResponseEntity<JsonNode> getTask(@PathVariable String name){
-        return ResponseEntity.ok(taskService.getTaskJSONByName(name));
+    @GetMapping("/{id}")
+    public ResponseEntity<JsonNode> getTask(@PathVariable Long id){
+        return ResponseEntity.ok(taskService.getTaskContentById(id));
     }
 
 

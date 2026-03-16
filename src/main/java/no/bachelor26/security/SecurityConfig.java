@@ -15,11 +15,21 @@ public class SecurityConfig {
     //TODO ordne javadocs på denne, authresponseDTO, LoginDTO, JwtAuthFilt, Authontroller + jwtservice
     //TODO fullføre jwtauthenticationfilter, authcontroller, jwtservice
     //TODO oppdater secconfing + test /apii/auth/login
+
     @Bean
     public PasswordEncoder passwordEncoder() {
+
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * SecurityFilterChain prosesserer innkommende HTTP forespørsler.
+     *
+     * @param http
+     * @return
+     * @throws Exception
+     * @author Edwina Larsen
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http

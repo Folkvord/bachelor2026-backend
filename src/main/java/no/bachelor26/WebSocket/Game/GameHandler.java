@@ -43,6 +43,11 @@ public class GameHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
         log.info("Klient koblet fra");
+
+        // Lukk oppgavesesjon dersom i en
+        taskService.closeTaskSession(
+            (UUID) session.getAttributes().get("userID")
+        );
     }
     
 
@@ -50,10 +55,14 @@ public class GameHandler extends TextWebSocketHandler {
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> msg) throws Exception{
 
-        log.info("Klient sendte medling");
-
         String payload = msg.getPayload().toString();
         GameMessage clientMessage = objectMapper.readValue(payload, GameMessage.class);
+        UUID userID = (UUID) session.getAttributes().get("userID");
+
+        // Videresend meldinger til tasksesjoner dersom i oppgavesesjon
+        if(taskService.userInTaskSession(userID)){
+            taskService.forwardMessageToTaskSession(userID, clientMessage);
+        }
 
         switch(clientMessage.getType()){
 
@@ -63,10 +72,6 @@ public class GameHandler extends TextWebSocketHandler {
 
             case "task":
                 respondToTask(session, clientMessage.getData());
-                break;
-
-            case "validate-flag":
-
                 break;
 
             default:
@@ -148,6 +153,8 @@ public class GameHandler extends TextWebSocketHandler {
             sendError(session, reply, "no access");
             return;
         }
+
+        // HER SKAL TASKLOOPEN STARTE
 
         reply.setStatus("success");
         send(session, reply);

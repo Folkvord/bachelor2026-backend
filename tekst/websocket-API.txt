@@ -1,0 +1,36 @@
+FORORD:
+    Meldingestrukturen har følgende felt:
+    Type:   String  -  Typen melding
+    Status: String  -  Statusen på operasjonen
+    Data: JsonNode  -  Selve innholdet
+
+    Svar på meldinger skal alltid ha den samme typen.
+
+    Når en melding skal sendes, kan Status-feltet ignoreres;
+    dette brukes bare for å sjekke resultatet av operasjonen som ble utført.
+
+
+
+UTENFOR OPPGAVER:
+
+
+    "task-info":    For å få informasjon om tilgjegelige oppgaver.
+        Melding:
+            Typen skal være "task-info"
+            Status og Data skal være tomt
+
+        Svar:
+            Status kommer som regel alltid til å være "success"
+            Data er en liste med JSON-objekter med (kan, men burde ikke være tom):
+                id: int
+                name: String
+                description: String
+    
+
+    "task":         For å starte en ny oppgave.
+        Melding:
+            Typen skal være "task"
+            Data skal inneholde ID-en på oppgaven brukeren vil ha.
+
+        Svar:
+            

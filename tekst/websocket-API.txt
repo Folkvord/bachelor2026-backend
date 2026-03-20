@@ -25,12 +25,47 @@ UTENFOR OPPGAVER:
                 id: int
                 name: String
                 description: String
-    
+
 
     "task":         For å starte en ny oppgave.
         Melding:
-            Typen skal være "task"
+            Typen skal være "task".
             Data skal inneholde ID-en på oppgaven brukeren vil ha.
+            Status skal være tom.
 
         Svar:
-            
+            Status kommer enten til å være "success", eller "error".
+            Dersom status var "success", kommer data til å inneholde hele oppgaven.
+            Dersom status var "error", kommer data til å inneholde beskrivelsen på feilen.
+            Hvis datafeltet som ble sendt var dårlig formatert eller manglende, vil beskrivelsen
+            være "invalid content". Hvis en oppgave som brukeren ikke har tilgang til eller som
+            ikke eksisterer ble etterspurt, vil beskrivelsen være "no access".
+            Ettersom svaret blir "success", kommer en ny oppgavesesjon til å bli startet i backenden;
+            nå forventer backenden enten et kall på "cancel-task", eller "parse-status".
+
+
+
+I OPPGAVESESJON:
+
+
+    "parse-status": For å fortelle backenden om klienten kunne parse oppgaven eller ikke.
+        Melding:
+            Typen skal være "parse-status".
+            Status skal inneholde statusen på parsingen; enten "success" eller "error".
+            Data skal bare inneholde beskrivelsen på feilen dersom statusen er "error",
+            hvis status var "success" skal Data være tomt.
+
+        Svar:
+            Ingen svar gis.
+
+    
+    "cancel-task":  For å avbryte en oppgave.
+        Melding:
+            Typen skal vøre "cancel-task".
+            Status skal enten inneholde "normal" eller "error" for å indikere hva som
+            fikk brukeren til å avbryte oppgaven (normal = brukeren, error = annet).
+            Data skal inneholde en kort beskrivelse på hvorfor sesjonen avbrytes.
+        
+        Svar:
+            idk
+        

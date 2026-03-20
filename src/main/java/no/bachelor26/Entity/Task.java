@@ -18,8 +18,14 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String description;
+
+    @Column(nullable = true)        // For de oppgavene som har et statisk flagg
+    private String staticFlag;      // Dersom oppgaven har et dynamisk flagg, er denne kollonen null
 
     @Column(columnDefinition = "jsonb")
     private String task;

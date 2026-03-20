@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import no.bachelor26.Entity.Task;
+import no.bachelor26.Projection.TaskContent;
 import no.bachelor26.Projection.TaskInfo;
 
 public interface TaskRepository extends JpaRepository<Task, Long>{
@@ -15,16 +16,16 @@ public interface TaskRepository extends JpaRepository<Task, Long>{
     @Query("""
         SELECT t.id AS id, t.name AS name, t.description AS description
         FROM Task t
-        WHERE t.id = :id        
+        WHERE t.id = :id
     """)
     Optional<TaskInfo> findInfoById(Long id);
 
     @Query("""
-        SELECT t.task as task
+        SELECT t.task as task, t.staticFlag as staticFlag
         FROM Task t
-        WHERE t.id = :id        
+        WHERE t.id = :id
     """)
-    Optional<String> findTaskContentById(Long id);
+    Optional<TaskContent> findTaskContentById(Long id);
 
 
 }

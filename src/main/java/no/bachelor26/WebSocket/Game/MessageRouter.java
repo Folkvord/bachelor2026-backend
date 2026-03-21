@@ -40,10 +40,11 @@ public class MessageRouter {
                 break;
 
             case "cancel-task":
-                taskService.respondToCancelTask(userID, clientMessage);
+                taskService.respondToCancelTask(userID);
                 break;
 
             case "validate-flag":
+                taskService.respondToValidateFlag(userID, clientMessage);
                 break;
 
             default:

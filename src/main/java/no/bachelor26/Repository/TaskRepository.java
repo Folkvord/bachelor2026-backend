@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import no.bachelor26.Entity.Task;
-import no.bachelor26.Projection.TaskContent;
+import no.bachelor26.Projection.TaskComponents;
 import no.bachelor26.Projection.TaskInfo;
 
 public interface TaskRepository extends JpaRepository<Task, Long>{
@@ -25,7 +25,7 @@ public interface TaskRepository extends JpaRepository<Task, Long>{
         FROM Task t
         WHERE t.id = :id
     """)
-    Optional<TaskContent> findTaskContentById(Long id);
+    Optional<TaskComponents> findTaskContentById(Long id);
 
 
 }

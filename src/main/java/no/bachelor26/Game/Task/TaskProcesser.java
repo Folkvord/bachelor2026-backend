@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import no.bachelor26.Projection.TaskContent;
-import tools.jackson.databind.JsonNode;
+import no.bachelor26.DTO.TaskProcessedResult;
+import no.bachelor26.Projection.TaskComponents;
 import tools.jackson.databind.ObjectMapper;
 
 @Component
@@ -21,20 +21,16 @@ public class TaskProcesser {
     ObjectMapper objectMapper;
 
 
-    private final String TEST_FLAG = "CTF{NICE FLAGG ;))}";
-
     static final Pattern VARIABLE_REGEX = Pattern.compile(
         "(?<!\\\\)\\$\\{([^}]+)\\}"
     );
     
 
-    public JsonNode preprocess(TaskContent unprocessedTask){
 
-        String flag = unprocessedTask.getStaticFlag();
-        if(flag == null){
-            //flag = flagService.generateFlag();
-            flag = TEST_FLAG;
-        }
+    
+    public TaskProcessedResult process(TaskComponents unprocessedTask){
+
+        String flag = determineFlag(unprocessedTask);
 
         Matcher matcher = VARIABLE_REGEX.matcher(unprocessedTask.getTask());
         StringBuffer result = new StringBuffer();
@@ -56,8 +52,25 @@ public class TaskProcesser {
         }
 
         matcher.appendTail(result);
-        return objectMapper.readTree(result.toString().replace("\\\\${", "${"));
+        
+        return new TaskProcessedResult(
+            flag,
+            objectMapper.readTree(result.toString().replace("\\\\${", "${"))
+        );
 
     }
-    
+
+
+
+    private String determineFlag(TaskComponents taskComponents){
+        String flag = taskComponents.getStaticFlag();
+        if(flag == null || flag.isBlank()){
+            // Generer flagget
+            flag = "CTF{ LOLL DETTE ER FLAGGET ASS }";
+        }
+        return flag;
+    }
+
+
+
 }

@@ -47,6 +47,17 @@ TILSTANDSMASKINEN:
         ACTIVE_TASK -> IDLE:
             "flag" (correct)
 
+    Dersom en melding med en type ikke tilgjegelig i tilstanden blir sendt, svares det alltid med
+    en feilmelding strukturert som dette:
+    {
+        "type": ** typen du sendte **,
+        "status": "error",
+        "data": {
+            "desc": "invalid state",
+            "state": ** tilstanden serveren mener klienten er i **
+        }
+    }
+
 
 
 Tilstand: IDLE

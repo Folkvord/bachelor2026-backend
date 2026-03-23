@@ -14,12 +14,13 @@ import no.bachelor26.Entity.AvailableTask;
 import no.bachelor26.Entity.Task;
 import no.bachelor26.Entity.User;
 import no.bachelor26.Exception.TaskNotFoundException;
-import no.bachelor26.Exception.UserInTaskSessionException;
 import no.bachelor26.Game.Task.TaskProcesser;
 import no.bachelor26.Game.Task.TaskSession;
 import no.bachelor26.Game.Task.TaskSession.TaskState;
 import no.bachelor26.Projection.TaskComponents;
 import no.bachelor26.Repository.TaskRepository;
+import no.bachelor26.WebSocket.UserSession;
+import no.bachelor26.WebSocket.UserState;
 import no.bachelor26.WebSocket.WebSocketSender;
 import no.bachelor26.WebSocket.Game.GameMessage;
 import tools.jackson.databind.JsonNode;
@@ -28,7 +29,6 @@ import tools.jackson.databind.ObjectMapper;
 
 @Service
 public class TaskService {
-
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -125,8 +125,9 @@ public class TaskService {
      * @param userID ID-en på klienten som kaller API-et
      * @author Kristoffer Folkvord
      */
-    public void respondToTaskInfo(UUID userID){
+    public void respondToTaskInfo(UserSession userSession){
         GameMessage reply = new GameMessage("task-info");
+        UUID userID = userSession.getUserID();
 
         reply.setStatus("success");
         reply.setData(
@@ -147,8 +148,9 @@ public class TaskService {
      * @param data Innholdet til klientmeldingen
      * @author Kristoffer Folkvord
      */
-    public void respondToTask(UUID userID, JsonNode data){
+    public void respondToTask(UserSession userSession, JsonNode data){
         GameMessage reply = new GameMessage("task");
+        UUID userID = userSession.getUserID();
 
         // Er innholdet en long?
         JsonNode content = data.get("taskID");
@@ -174,13 +176,22 @@ public class TaskService {
             return;
         }
 
+        // WTF SKAL SKJE DERSOM DET ER EN DUPE SESJON
+        boolean startedSession = startTaskSession(userID, taskID, processedTask.getFlag());
+        if(!startedSession){
+            sender.sendError(userID, reply, "dupe session");
+            return;
+        }
+
+        reply.setStatus("success");
         reply.setData(
             processedTask.getTask()
         );
-
-        reply.setStatus("success");
         sender.send(userID, reply);
-        startTaskSession(userID, taskID, processedTask.getFlag());
+
+        System.out.println("init sesjon");
+
+        userSession.setState(UserState.PARSE_STANDBY);
     }
 
 
@@ -191,18 +202,19 @@ public class TaskService {
      * @param userID ID-en på klienten som kaller API-et
      * @param msg GameMessage
      */
-    public void respondToParseStatus(UUID userID, GameMessage msg){
+    public void respondToParseStatus(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage("parse-status");
+        UUID userID = userSession.getUserID();
 
-        TaskSession session = getUserTaskSession(userID);
-        if(session == null){
-            log.error("Klienten: (" + userID + "), som ikke er i en aktiv oppgavesesjon prøvde å avbryte en");
+        TaskSession taskSession = getUserTaskSession(userID);
+        if(taskSession == null){
+            userSession.setState(UserState.IDLE);
             sender.sendError(userID, reply, "no session");
             return;
         }
 
-        if(session.getCurrentState() != TaskState.STANDBY){
-            log.error("Klienten: (" + userID + "), sendte en parse-status melding til en oppgavesesjon med en taskstate ulik STANDBY");
+        if(!taskSession.inStandby()){
+            userSession.setState(UserState.IDLE);
             sender.sendError(userID, reply, "invalid session state");
             return;
         }
@@ -210,18 +222,21 @@ public class TaskService {
         reply.setStatus("success");
         switch(msg.getStatus()){
             case "success":
-                session.setCurrentState(TaskState.RUNNING);
+                System.out.println("starta sesjon");
+
+                taskSession.setCurrentState(TaskState.RUNNING);
+                userSession.setState(UserState.ACTIVE_TASK);
                 break;
 
             case "error":
-                session.setCurrentState(TaskState.STOPPED);
-                log.error("En klient: (" + userID + ") kunne ikke parse oppgaven med ID: (" + session.getTaskID() + "), gitt grunn: " + msg.getData());
-                respondToCancelTask(userID);
+                taskSession.setCurrentState(TaskState.STOPPED);
+                userSession.setState(UserState.IDLE);
+                cancelTaskSession(userID);
                 break;
 
             default:
-                session.setCurrentState(TaskState.STOPPED);
-                log.error("En klient: (" + userID + ") fikk en ukjent status: " + msg.getStatus());
+                taskSession.setCurrentState(TaskState.STOPPED);
+                userSession.setState(UserState.IDLE);
                 sender.sendError(userID, reply, "wtf");
                 return;
         }
@@ -237,13 +252,9 @@ public class TaskService {
      * @param userID ID-en på klienten som kaller API-et
      * @param msg GameMessage
      */
-    public void respondToCancelTask(UUID userID){
-        if(!activeSessions.containsKey(userID)){
-            log.error("Klienten: (" + userID + "), som ikke er i en aktiv oppgavesesjon prøvde å avbryte en");
-            return;
-        }
-        log.info("Klienten: (" + userID + "), avbrøt oppgavesesjonen sin");
-        activeSessions.remove(userID);
+    public void respondToCancelTask(UserSession userSession){
+        cancelTaskSession(userSession.getUserID());
+        userSession.setState(UserState.IDLE);
     }
 
 
@@ -254,34 +265,33 @@ public class TaskService {
      * @param userID ID-en på klienten som kaller API-et
      * @param msg GameMessage
      */
-    public void respondToValidateFlag(UUID userID, GameMessage msg){
+    public void respondToValidateFlag(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage("cancel-task");
+        UUID userID = userSession.getUserID();
 
         if(!activeSessions.containsKey(userID)){
-            log.warn("Klienten: (" + userID + "), som ikke er i en aktiv oppgavesesjon prøvde å validere et flagg");
             sender.sendError(userID, reply, "no session");
             return;
         }
 
         if(msg.getData() == null || !msg.getData().has("flag")){
-            log.error("Klienten: (" + userID + "), sendte en ugyldig validate-flag melding");
             sender.sendError(userID, reply, "invalid format");
             return;
         }
 
-        TaskSession session = getUserTaskSession(userID);
-        if(session.getCurrentState() != TaskSession.TaskState.RUNNING){
-            log.error("Klienten: (" + userID + "), prøvde å validere et flagg før parsingen av oppgaven var ferdig");
+        TaskSession taskSession = getUserTaskSession(userID);
+        if(!taskSession.isRunning()){
             sender.sendError(userID, msg, "invalid task state");
             return;
         }
 
         String flag = msg.getData().get("flag").toString();
-        System.out.println(flag);
 
-        log.info("Klienten: (" + userID + "), validerte et flagg");
-        
-        String result = session.validateFlag(flag) ? "correct" : "wrong";
+        String result = taskSession.validateFlag(flag) ? "correct" : "wrong";
+        if(result.equals("correct")){
+            userSession.setState(UserState.IDLE);
+        }
+
         reply.setStatus("success");
         reply.setData(
             objectMapper.readTree("{\"result\":\"" + result + "\"}")
@@ -293,20 +303,33 @@ public class TaskService {
 
     
     /**
-     * Starter en ny oppgavesesjon
+     * Starter en ny oppgavesesjon hvis ikke en allerede eksisterer.
      * 
      * @param userID ID-en til klienten som starter sesjonen
      * @param taskID ID-en til oppgaven sesjonen starter med
      */
-    public void startTaskSession(UUID userID, Long taskID, String flag){
+    public boolean startTaskSession(UUID userID, Long taskID, String flag){
         if(activeSessions.containsKey(userID)){
-            log.error("En bruker i en aktiv oppgavesesjon prøvde å starte en ny oppgavesesjon");
-            throw new UserInTaskSessionException(userID, taskID);
+            return false;
         }
 
-        TaskSession taskSession = new TaskSession(userID, taskID, flag);
-        activeSessions.put(userID, taskSession);
-        log.info("KLIENT STARTET SESJON");
+        activeSessions.put(userID, new TaskSession(
+            userID, taskID, flag
+        ));
+
+        return true;
+    }
+
+
+
+    /**
+     * Avbryter en oppgavesesjon ved å fjerne den fra activeSessions.
+     * 
+     * @param userID ID-en til klientens oppgavesesjon
+     * @return 
+     */
+    public boolean cancelTaskSession(UUID userID){
+        return activeSessions.remove(userID) != null;
     }
 
 

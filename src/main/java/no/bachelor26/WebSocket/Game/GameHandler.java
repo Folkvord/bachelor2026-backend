@@ -11,6 +11,7 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import no.bachelor26.WebSocket.UserSession;
 import no.bachelor26.WebSocket.WebSocketSender;
 import tools.jackson.databind.ObjectMapper;
 
@@ -34,7 +35,8 @@ public class GameHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session){
         log.info("Klient tilkoblet");
         UUID userID = UUID.fromString("332a4d65-2a84-423b-be83-53bc6d24f2e8");      // Alle er Kristoffer rn
-        session.getAttributes().put("userID", userID);
+        UserSession userSession = new UserSession(userID);
+        session.getAttributes().put("userSession", userSession);
         sender.appendSession(userID, session);
     }
 
@@ -43,7 +45,10 @@ public class GameHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
         log.info("Klient koblet fra");
-        sender.removeSession((UUID) session.getAttributes().get("userID"));
+        sender.removeSession(
+            ((UserSession) session.getAttributes().get("userSession"))
+                .getUserID()
+        );
     }
     
 
@@ -52,9 +57,12 @@ public class GameHandler extends TextWebSocketHandler {
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> msg) throws Exception{
         String payload = msg.getPayload().toString();
         GameMessage clientMessage = objectMapper.readValue(payload, GameMessage.class);
-        UUID userID = (UUID) session.getAttributes().get("userID");
+        UserSession userSession = (UserSession) session.getAttributes().get("userSession");
 
-        messageRouter.routeGameMessage(userID, clientMessage);
+        // Pass på tullinger som sender dupe meldinger
+        synchronized(userSession){
+            messageRouter.routeGameMessage(userSession, clientMessage);
+        }
 
     }
 

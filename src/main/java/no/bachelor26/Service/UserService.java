@@ -60,7 +60,7 @@ public class UserService {
     }
 
 
-    // Gir en bruker tilgang til de 9 introoppgavene
+/*     // Gir en bruker tilgang til de 9 introoppgavene
     private void grantUserIntroTasks(User user){
 
         for(int i = 1; i <= 9; i++){
@@ -68,6 +68,6 @@ public class UserService {
             taskService.grantTaskAccess(user, taskID);
         }
 
-    }
+    } */
 
 }

@@ -25,6 +25,7 @@ import no.bachelor26.WebSocket.WebSocketSender;
 import no.bachelor26.WebSocket.Game.GameMessage;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.exc.JsonNodeException;
 
 
 @Service
@@ -266,7 +267,7 @@ public class TaskService {
      * @param msg GameMessage
      */
     public void respondToValidateFlag(UserSession userSession, GameMessage msg){
-        GameMessage reply = new GameMessage("cancel-task");
+        GameMessage reply = new GameMessage("validate-flag");
         UUID userID = userSession.getUserID();
 
         if(!activeSessions.containsKey(userID)){
@@ -275,17 +276,23 @@ public class TaskService {
         }
 
         if(msg.getData() == null || !msg.getData().has("flag")){
-            sender.sendError(userID, reply, "invalid format");
+            sender.sendError(userID, reply, "invalid data format");
             return;
         }
 
         TaskSession taskSession = getUserTaskSession(userID);
         if(!taskSession.isRunning()){
-            sender.sendError(userID, msg, "invalid task state");
+            sender.sendError(userID, reply, "invalid task state");
             return;
         }
 
-        String flag = msg.getData().get("flag").toString();
+        String flag = "wiener";
+        try{
+            flag = msg.getData().get("flag").asString();
+        } catch(JsonNodeException e){
+            sender.sendError(userID, reply, "invalid flag format");
+            return;
+        }
 
         String result = taskSession.validateFlag(flag) ? "correct" : "wrong";
         if(result.equals("correct")){
@@ -297,7 +304,7 @@ public class TaskService {
             objectMapper.readTree("{\"result\":\"" + result + "\"}")
         );
 
-        sender.send(userID, msg);
+        sender.send(userID, reply);
     }
 
 

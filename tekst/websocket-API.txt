@@ -11,8 +11,45 @@ FORORD:
     Svar på meldinger har alltid den samme typen som meldingen sendt.
 
 
+TILSTANDSMASKINEN:
+    Backenden har implementert en enkel tilstandsmaskin som passer på hva brukeren gjør.
+    Disse tilstandene skal passe på hva klienten har lov til å sende backenden til en hver tid.
+    For eksempel, når brukeren ikke spiller en oppgave, burde de ikke få lov til å validere flagg.
+    Det er ikke før en ny melding sendes at en tilstand kan endres.
+    Per nå finnes det tre tilstander:
+        IDLE:
+            Tilstanden brukeren er i når de logger inn og den de er i utenfor en oppgave.
+        PARSE_STANDBY:
+            Dette er en kortvarig tilstand der backenden forventer å få en status om klienten
+            klarte å parse oppgavestrukturen til en spillbar oppgave.
+        ACTIVE_TASK:
+            Dette er tilstanden der en oppgave spilles ut. Så lenge denne tilstanden er aktiv,
+            kommer backenden til å tracke input, statistikk og måle tiden brukeren bruker på oppgaven.
 
-UTENFOR OPPGAVER:
+    Et overordnet blikk av tilstandsmaskinen:
+        IDLE -> IDLE:
+            "task-info", 
+            "task" (error)
+        
+        IDLE -> PARSE_STANDBY:
+            "task" (ok)
+
+        PARSE_STANDBY -> IDLE:
+            "parse-status" (error)
+
+        PARSE_STANDBY -> ACTIVE_TASK:
+            "parse-status" (ok)
+
+        ACTIVE_TASK -> ACTIVE_TASK:
+            "hint",
+            "flag" (wrong)
+
+        ACTIVE_TASK -> IDLE:
+            "flag" (correct)
+
+
+
+Tilstand: IDLE
 
 
     "task-info":    For å få informasjon om tilgjegelige oppgaver.
@@ -41,12 +78,12 @@ UTENFOR OPPGAVER:
             Hvis datafeltet som ble sendt var dårlig formatert eller manglende, vil beskrivelsen
             være "invalid content". Hvis en oppgave som brukeren ikke har tilgang til eller som
             ikke eksisterer ble etterspurt, vil beskrivelsen være "no access".
-            Ettersom svaret blir "success", kommer en ny oppgavesesjon til å bli startet i backenden;
-            nå forventer backenden enten et kall på "parse-status".
+            Ettersom svaret blir "success", kommer en ny oppgavesesjon til å bli startet i backenden
+            og tilstanden endres fra IDLE til PARSE_STANDBY.
 
 
 
-I OPPGAVESESJON:
+Tilstand: ACTIVE_TASK
 
 
     "parse-status": For å fortelle backenden om klienten kunne parse oppgaven eller ikke.
@@ -60,8 +97,13 @@ I OPPGAVESESJON:
         Svar:
             Svaret er en ACK som forteller om oppgavesesjonen har begynt. 
             Status kommer enten til å være satt til "success" eller "error".
+            Dersom "success", kommer tilstanden til å endre seg til ACTIVE_TASK,
+            hvis "error", endrer den tilbake til IDLE.
 
 
+
+
+Tilstand: ACTIVE_TASK
     
     "cancel-task":  For å avbryte en oppgave.
         Melding:

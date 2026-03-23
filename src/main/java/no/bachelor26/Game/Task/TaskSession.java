@@ -38,6 +38,18 @@ public class TaskSession {
 
 
 
+    public boolean inStandby(){
+        return currentState == TaskState.STANDBY;
+    }
+
+
+
+    public boolean isRunning(){
+        return currentState == TaskState.RUNNING;
+    }
+
+
+
     public enum TaskState{
         STANDBY,
         RUNNING,

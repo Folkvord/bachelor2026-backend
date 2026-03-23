@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import no.bachelor26.Service.TaskService;
 import no.bachelor26.WebSocket.UserSession;
 import no.bachelor26.WebSocket.WebSocketSender;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 public class MessageRouter {
@@ -16,6 +17,9 @@ public class MessageRouter {
 
     @Autowired
     TaskService taskService;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Autowired
     WebSocketSender sender;
@@ -143,11 +147,13 @@ public class MessageRouter {
             "Klient: (" + userSession.getUserID() + "). Ugyldig tilstand for meldingstype: " + userSession.getState().name() + " -> " + msg.getType()
         );
 
-        sender.sendError(
-            userSession.getUserID(),
-            new GameMessage(msg.getType()),
-            "invalid state. Current state: " + userSession.getState().name()
-        );
+        GameMessage errMsg = new GameMessage(msg.getType());
+        errMsg.setStatus("error");
+        errMsg.setData(objectMapper.readTree(
+            "{\"desc\":\"invalid state\",\"state\":\"" + userSession.getState().name() + "\"}"
+        ));
+
+        sender.send(userSession.getUserID(), errMsg);
 
     }
 

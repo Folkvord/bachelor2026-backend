@@ -65,4 +65,15 @@ public class GlobalExceptionHandler {
             ));
     }
 
+
+    // Når en bruker ikke har tilgang til en oppgave
+    @ExceptionHandler(UserInTaskSessionException.class)
+    public ResponseEntity<?> UserInTaskSessionExceptionException(UserInTaskSessionException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(Map.of(
+                "cause", "User in session",
+                "desc", ex.getMessage()
+            ));
+    }
+
 }

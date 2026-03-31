@@ -1,0 +1,89 @@
+FORORD:
+    Meldingestrukturen har følgende felt:
+    Type:   String  -  Typen melding
+    Status: String  -  Statusen på operasjonen
+    Data: JsonNode  -  Selve innholdet
+
+    Alle API-er beskrevet under er sett fra klienten (godot) sin side;
+    "Melding" beskriver meldingen klienten sender serveren, og 
+    "Svar" beskriver meldingen serveren kommer til å svare med. 
+
+    Svar på meldinger har alltid den samme typen som meldingen sendt.
+
+
+
+UTENFOR OPPGAVER:
+
+
+    "task-info":    For å få informasjon om tilgjegelige oppgaver.
+        Melding:
+            Typen skal være "task-info"
+            Status og Data skal være tomt
+
+        Svar:
+            Status kommer som regel alltid til å være "success"
+            Data er en liste med JSON-objekter med (kan, men burde ikke være tom):
+                id: int
+                name: String
+                description: String
+
+
+    "task":         For å starte en ny oppgave.
+        Melding:
+            Typen skal være "task".
+            Data skal inneholde ID-en på oppgaven brukeren vil ha.
+            Status skal være tom.
+
+        Svar:
+            Status kommer enten til å være "success", eller "error".
+            Dersom status var "success", kommer data til å inneholde hele oppgaven.
+            Dersom status var "error", kommer data til å inneholde beskrivelsen på feilen.
+            Hvis datafeltet som ble sendt var dårlig formatert eller manglende, vil beskrivelsen
+            være "invalid content". Hvis en oppgave som brukeren ikke har tilgang til eller som
+            ikke eksisterer ble etterspurt, vil beskrivelsen være "no access".
+            Ettersom svaret blir "success", kommer en ny oppgavesesjon til å bli startet i backenden;
+            nå forventer backenden enten et kall på "parse-status".
+
+
+
+I OPPGAVESESJON:
+
+
+    "parse-status": For å fortelle backenden om klienten kunne parse oppgaven eller ikke.
+                    (NB: Dette er en respons tilbake til backenden etter et vellykket kall på "task")
+        Melding:
+            Typen skal være "parse-status".
+            Status skal inneholde statusen på parsingen; enten "success" dersom parsingen
+            var vellykket, eller "error" dersom ikke. Hvis "error", så skal Data under nøkklen
+            "desc" inneholde feilmeldingen taskParseren ga.
+
+        Svar:
+            Svaret er en ACK som forteller om oppgavesesjonen har begynt. 
+            Status kommer enten til å være satt til "success" eller "error".
+
+
+    
+    "cancel-task":  For å avbryte en oppgave.
+        Melding:
+            Typen skal være "cancel-task".
+            Status skal enten inneholde "normal" eller "error" for å indikere hva som
+            fikk brukeren til å avbryte oppgaven (normal = brukeren, error = annet).
+            Data skal inneholde et felt med nøkklen "desc" som er en kort beskrivelse
+            på hvorfor sesjonen avbrytes.
+        
+        Svar:
+            idk
+        
+
+    "validate-flag":    For å validere et flagg.
+        Melding:
+            Typen skal være "validate-flag".
+            Data skal inneholde et felt med nøkklen "flag" som er flagget som valideres.
+            Status skal være tomt.
+
+        Svar:
+            Statusen kommer til å være "success" uansett om flagget var riktig eller ikke;
+            "error" blir satt dersom meldingen var dårlig definert eller sendt før "parse-status"
+            meldingen ble sendt.
+            Data kommer til å ha et felt under nøkklen "isCorrect" som inneholder resultatet
+            av valideringen (true, eller false).

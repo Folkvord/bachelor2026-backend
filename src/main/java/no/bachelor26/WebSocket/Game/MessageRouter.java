@@ -69,11 +69,11 @@ public class MessageRouter {
 
         switch(msg.getType()){
             case "task-info":
-                taskService.respondToTaskInfo(userSession);
+                taskService.respondToTaskInfo(userSession, msg);
                 break;
 
             case "task":
-                taskService.respondToTask(userSession, msg.getData());
+                taskService.respondToTask(userSession, msg);
                 break;
 
             default:

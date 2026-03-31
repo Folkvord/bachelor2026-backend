@@ -7,6 +7,7 @@ import tools.jackson.databind.JsonNode;
 public class GameMessage {
 
     private String type;
+    private int requestID;
     private String status;
     private JsonNode data;
     

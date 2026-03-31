@@ -126,8 +126,9 @@ public class TaskService {
      * @param userID ID-en på klienten som kaller API-et
      * @author Kristoffer Folkvord
      */
-    public void respondToTaskInfo(UserSession userSession){
+    public void respondToTaskInfo(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage("task-info");
+        reply.setRequestID(msg.getRequestID());
         UUID userID = userSession.getUserID();
 
         reply.setStatus("success");
@@ -149,12 +150,13 @@ public class TaskService {
      * @param data Innholdet til klientmeldingen
      * @author Kristoffer Folkvord
      */
-    public void respondToTask(UserSession userSession, JsonNode data){
+    public void respondToTask(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage("task");
+        reply.setRequestID(msg.getRequestID());
         UUID userID = userSession.getUserID();
 
         // Er innholdet en long?
-        JsonNode content = data.get("taskID");
+        JsonNode content = msg.getData().get("taskID");
         if(content == null || !content.canConvertToLong()){
             sender.sendError(userID, reply, "invalid content");
             return;
@@ -205,6 +207,7 @@ public class TaskService {
      */
     public void respondToParseStatus(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage("parse-status");
+        reply.setRequestID(msg.getRequestID());
         UUID userID = userSession.getUserID();
 
         TaskSession taskSession = getUserTaskSession(userID);
@@ -268,6 +271,7 @@ public class TaskService {
      */
     public void respondToValidateFlag(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage("validate-flag");
+        reply.setRequestID(msg.getRequestID());
         UUID userID = userSession.getUserID();
 
         if(!activeSessions.containsKey(userID)){
@@ -307,7 +311,7 @@ public class TaskService {
         sender.send(userID, reply);
     }
 
-
+    
     
     /**
      * Starter en ny oppgavesesjon hvis ikke en allerede eksisterer.

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import no.bachelor26.DTO.TaskProcessedResult;
-import no.bachelor26.Entity.AvailableTask;
 import no.bachelor26.Entity.Task;
 import no.bachelor26.Entity.User;
 import no.bachelor26.Exception.TaskNotFoundException;
@@ -34,9 +33,6 @@ public class TaskService {
 
     @Autowired
     TaskRepository taskRepo;
-
-    @Autowired
-    AvailableTaskService availableTaskService;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -100,45 +96,13 @@ public class TaskService {
 
 
     /**
-     * Gir en bruker tilgang til en oppgave.
-     * 
-     * @param user Brukeren som skal få tilgang
-     * @param taskID ID-en til oppgaven brukeren skal få tilgang til
-     * @throws TaskNotFoundException
-     * @author Kristoffer Folkvord
-    */
-    public void grantTaskAccess(User user, Long taskID){
-        AvailableTask availableTaskToken = new AvailableTask();
-        availableTaskToken.setUser(user);
-
-        Task task = taskRepo.findById(taskID).orElseThrow(
-            () -> new TaskNotFoundException(taskID)
-        );
-
-        availableTaskToken.setTask(task);
-    }
-
-
-
-    /**
      * API-et for henting av oppgaveinformasjon.
+     * SKAL RETURNERE ID-ENE TIL OPPGAVENE BRUKEREN HAR TILGANG TIL
      * 
      * @param userID ID-en på klienten som kaller API-et
-     * @author Kristoffer Folkvord
      */
     public void respondToTaskInfo(UserSession userSession, GameMessage msg){
-        GameMessage reply = new GameMessage("task-info");
-        reply.setRequestID(msg.getRequestID());
-        UUID userID = userSession.getUserID();
 
-        reply.setStatus("success");
-        reply.setData(
-            objectMapper.valueToTree(
-                availableTaskService.getAvailableTaskInfo(userID)
-            )
-        );
-        
-        sender.send(userID, reply);
     }
 
 
@@ -164,12 +128,10 @@ public class TaskService {
 
         Long taskID = content.asLong();
 
-        // Har brukeren tilgang til oppgaven?
-        if(!availableTaskService.userHasAccessToTask(userID, taskID)){
-            sender.sendError(userID, reply, "no access");
-            return;
-        }
         
+        // Har brukeren tilgang til oppgaven?
+
+
         // Hent prosessert oppgave
         TaskProcessedResult processedTask;
         try{

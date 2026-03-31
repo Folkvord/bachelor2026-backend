@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        String jwt = authHeader.substring(7); //hvorfor 7
+        String jwt = authHeader.substring(7);
         String username = jwtService.extractUsername(jwt);
 
         //hvis token har brukernavn og bruker ikke er autentisert

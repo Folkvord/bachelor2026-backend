@@ -1,17 +1,15 @@
 package no.bachelor26.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import no.bachelor26.DTO.TaskProcessedResult;
-import no.bachelor26.Entity.Task;
-import no.bachelor26.Entity.User;
 import no.bachelor26.Exception.TaskNotFoundException;
 import no.bachelor26.Game.Task.TaskProcesser;
 import no.bachelor26.Game.Task.TaskSession;
@@ -29,7 +27,6 @@ import tools.jackson.databind.exc.JsonNodeException;
 
 @Service
 public class TaskService {
-    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     TaskRepository taskRepo;
@@ -102,6 +99,23 @@ public class TaskService {
      * @param userID ID-en på klienten som kaller API-et
      */
     public void respondToTaskInfo(UserSession userSession, GameMessage msg){
+        GameMessage reply = new GameMessage("task-info");
+        reply.setRequestID(msg.getRequestID());
+        UUID userID = userSession.getUserID();
+
+        // Blabla hent tilgjengelige oppgaver (MIDLERTIDIG HARDKODET)
+        List<Long> tempAvaliableTasks = new ArrayList<>();
+        tempAvaliableTasks.add(Long.valueOf(0));
+        tempAvaliableTasks.add(Long.valueOf(1));
+        tempAvaliableTasks.add(Long.valueOf(2));
+
+        reply.setData(
+            objectMapper.valueToTree(
+                tempAvaliableTasks
+            )
+        );
+
+        sender.send(userID, reply);
 
     }
 

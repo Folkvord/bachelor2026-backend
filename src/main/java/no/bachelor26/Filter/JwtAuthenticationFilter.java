@@ -17,8 +17,14 @@ import no.bachelor26.security.JwtService;
 import no.bachelor26.security.UserTranslator;
 
 /**
- *Filter som kjører på hver forespørsel og sjekker for
- *JWT token i Authorization header
+ *Filter som kjører på hver HTTP forespørsel
+ *
+ * Leser Authorization header
+ * Henter JWT token
+ * Validerer tokenet
+ * Setter autentisert bruker i SecurityContext
+ *
+ * Gjør det mulig å bruke JWT for autentisering uten sessions.
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -28,6 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private UserTranslator userTranslator;
 
+    /**
+     * Utfører request HTTP forespørsel
+     *
+     * @param request HTTP forespørsel
+     * @param response HTTP respons
+     * @param filterChain videre filterchain
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,

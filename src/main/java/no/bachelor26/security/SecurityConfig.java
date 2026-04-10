@@ -12,12 +12,22 @@ import no.bachelor26.Filter.JwtAuthenticationFilter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.http.SessionCreationPolicy;
+
+/**
+ * Konfigurasjon av Spring Security.
+ *
+ * Definerer hvilke endepunkter som er åpne/låst
+ * Aktiverer JWT basert autentisering
+ * Deaktiverer session (stateless)
+ *
+ * Bruker JwtAuthenticationFilter for å validere tokens.
+ * @Author Edwina Larsen
+ */
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    //TODO ordne javadocs på denne, authresponseDTO, LoginDTO, JwtAuthFilt, Authontroller + jwtservice
-    //TODO oppdater secconfing + test /apii/auth/login
+
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }

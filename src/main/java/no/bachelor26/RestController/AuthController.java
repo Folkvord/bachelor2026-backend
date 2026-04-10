@@ -13,7 +13,11 @@ import no.bachelor26.DTO.LoginDTO;
 import no.bachelor26.security.JwtService;
 
 /**
- * Håndterer autentisering endpoints som login.
+ * Kontroller for autentisering (login).
+ *
+ * Tar imot brukernavn + passord
+ * Autentiserer bruker via Spring Security
+ * Returnerer JWT token ved vellykket login
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -25,6 +29,12 @@ public class AuthController {
     @Autowired
     private JwtService jwtService;
 
+    /**
+     * Logger inn en bruker og returnerer JWT token
+     *
+     * @param loginDTO inneholder brukernavn + passord
+     * @return JWT token hvis autentisering lykkes
+     */
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO loginDTO) {
 

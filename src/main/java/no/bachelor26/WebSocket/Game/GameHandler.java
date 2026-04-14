@@ -11,6 +11,7 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import no.bachelor26.Service.TaskService;
 import no.bachelor26.WebSocket.UserSession;
 import no.bachelor26.WebSocket.WebSocketSender;
 import tools.jackson.databind.ObjectMapper;
@@ -29,6 +30,9 @@ public class GameHandler extends TextWebSocketHandler {
     @Autowired
     WebSocketSender sender;
 
+    @Autowired
+    TaskService taskService;
+
 
 
     @Override
@@ -45,10 +49,12 @@ public class GameHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
         log.info("Klient koblet fra");
-        sender.removeSession(
-            ((UserSession) session.getAttributes().get("userSession"))
-                .getUserID()
-        );
+        
+        UUID userID = ((UserSession) session.getAttributes().get("userSession")).getUserID();
+
+        sender.removeSession(userID);
+        taskService.cancelTaskSession(userID);
+
     }
     
 

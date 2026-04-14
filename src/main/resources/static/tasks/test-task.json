@@ -3,8 +3,8 @@
         "extraDescription": "bla bla bla finn flagg",
         "hintCosts": [1, 2, 3]
     },
-    "dynamic": {
-        "sus fil innhold": "innhold som skal erstatte tomrommet.\n dette blir erstattet med flagget -> ${flag}, men dette blir ikke -> \\${flag}",
-        "random passord indeks": "${randomInt(0, 500)}"
+    "data": {
+        "flagg": "${flag}",
+        "filinnhold": "Dette kommer RETT fra backenden"
     }
 }

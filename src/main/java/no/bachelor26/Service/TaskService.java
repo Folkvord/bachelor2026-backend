@@ -168,8 +168,6 @@ public class TaskService {
         );
         sender.send(userID, reply);
 
-        System.out.println("init sesjon");
-
         userSession.setState(UserState.PARSE_STANDBY);
     }
 

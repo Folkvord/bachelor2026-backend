@@ -1,12 +1,13 @@
 FORORD:
     Meldingestrukturen har følgende felt:
     Type:   String  -  Typen melding
+    RequestID: int  -  ID knyttet til den kallende funksjonen i godot
     Status: String  -  Statusen på operasjonen
     Data: JsonNode  -  Selve innholdet
 
     Alle API-er beskrevet under er sett fra klienten (godot) sin side;
     "Melding" beskriver meldingen klienten sender serveren, og 
-    "Svar" beskriver meldingen serveren kommer til å svare med. 
+    "Svar" beskriver meldingen serveren kommer til å svare med.
 
     Svar på meldinger har alltid den samme typen som meldingen sendt.
 
@@ -94,7 +95,7 @@ Tilstand: IDLE
 
 
 
-Tilstand: ACTIVE_TASK
+Tilstand: PARSE_STANDBY
 
 
     "parse-status": For å fortelle backenden om klienten kunne parse oppgaven eller ikke.
@@ -110,7 +111,6 @@ Tilstand: ACTIVE_TASK
             Status kommer enten til å være satt til "success" eller "error".
             Dersom "success", kommer tilstanden til å endre seg til ACTIVE_TASK,
             hvis "error", endrer den tilbake til IDLE.
-
 
 
 

@@ -1,4 +1,4 @@
-package no.bachelor26.security;
+package no.bachelor26.Security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

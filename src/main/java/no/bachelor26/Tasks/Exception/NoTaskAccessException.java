@@ -1,4 +1,4 @@
-package no.bachelor26.Exception;
+package no.bachelor26.Tasks.Exception;
 
 public class NoTaskAccessException extends RuntimeException {
     

@@ -1,4 +1,4 @@
-package no.bachelor26.security;
+package no.bachelor26.Security;
 
 import java.util.Date;
 import java.util.function.Function;

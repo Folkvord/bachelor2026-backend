@@ -7,6 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import no.bachelor26.Tasks.Exception.NoTaskAccessException;
+import no.bachelor26.Tasks.Exception.TaskNotFoundException;
+import no.bachelor26.User.Exception.EmailInUseException;
+import no.bachelor26.User.Exception.UserInTaskSessionException;
+import no.bachelor26.User.Exception.UsernameTakenException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

@@ -1,4 +1,4 @@
-package no.bachelor26.Game.Task;
+package no.bachelor26.Tasks;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -8,8 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import no.bachelor26.DTO.TaskProcessedResult;
-import no.bachelor26.Projection.TaskComponents;
+import no.bachelor26.Tasks.DTO.TaskProcessedResult;
 import tools.jackson.databind.ObjectMapper;
 
 @Component

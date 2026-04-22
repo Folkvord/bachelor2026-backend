@@ -1,4 +1,4 @@
-package no.bachelor26.RestController;
+package no.bachelor26.User;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
-import no.bachelor26.DTO.RegisterUserDTO;
-import no.bachelor26.Service.UserService;
+import no.bachelor26.User.DTO.RegisterUserDTO;
 
 
 @RestController

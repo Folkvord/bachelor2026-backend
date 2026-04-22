@@ -8,9 +8,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import no.bachelor26.DTO.AuthResponseDTO;
-import no.bachelor26.DTO.LoginDTO;
-import no.bachelor26.security.JwtService;
+import no.bachelor26.Security.JwtService;
+import no.bachelor26.Security.DTO.AuthResponseDTO;
+import no.bachelor26.User.DTO.LoginDTO;
 
 /**
  * Kontroller for autentisering (login).

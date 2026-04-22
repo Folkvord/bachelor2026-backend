@@ -1,4 +1,4 @@
-package no.bachelor26.Game.Task;
+package no.bachelor26.Tasks;
 
 import java.time.LocalTime;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package no.bachelor26.Projection;
+package no.bachelor26.Tasks;
 
 public interface TaskInfo {
 

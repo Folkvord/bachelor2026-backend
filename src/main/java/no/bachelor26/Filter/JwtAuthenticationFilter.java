@@ -13,8 +13,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import no.bachelor26.security.JwtService;
-import no.bachelor26.security.UserTranslator;
+import no.bachelor26.Security.JwtService;
+import no.bachelor26.User.UserTranslator;
 
 /**
  *Filter som kjører på hver HTTP forespørsel

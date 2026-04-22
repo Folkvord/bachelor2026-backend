@@ -1,9 +1,8 @@
-package no.bachelor26.Service;
+package no.bachelor26.User;
 
-import no.bachelor26.Entity.User;
-import no.bachelor26.Exception.EmailInUseException;
-import no.bachelor26.Exception.UsernameTakenException;
-import no.bachelor26.Repository.UserRepository;
+import no.bachelor26.Tasks.TaskService;
+import no.bachelor26.User.Exception.EmailInUseException;
+import no.bachelor26.User.Exception.UsernameTakenException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

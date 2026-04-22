@@ -1,4 +1,4 @@
-package no.bachelor26.DTO;
+package no.bachelor26.Tasks.DTO;
 
 import lombok.Data;
 import tools.jackson.databind.JsonNode;

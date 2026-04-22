@@ -1,4 +1,4 @@
-package no.bachelor26.Entity;
+package no.bachelor26.Tasks;
 
 
 import jakarta.persistence.Column;

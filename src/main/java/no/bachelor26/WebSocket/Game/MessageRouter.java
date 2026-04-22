@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import no.bachelor26.Service.TaskService;
+import no.bachelor26.Tasks.TaskService;
 import no.bachelor26.WebSocket.UserSession;
 import no.bachelor26.WebSocket.WebSocketSender;
 import tools.jackson.databind.ObjectMapper;

@@ -1,4 +1,4 @@
-package no.bachelor26.DTO;
+package no.bachelor26.Security.DTO;
 
 /**
  *

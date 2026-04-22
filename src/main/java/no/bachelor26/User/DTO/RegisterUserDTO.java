@@ -1,4 +1,4 @@
-package no.bachelor26.DTO;
+package no.bachelor26.User.DTO;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

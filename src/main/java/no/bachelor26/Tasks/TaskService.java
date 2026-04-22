@@ -1,4 +1,4 @@
-package no.bachelor26.Service;
+package no.bachelor26.Tasks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,13 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import no.bachelor26.DTO.TaskProcessedResult;
-import no.bachelor26.Exception.TaskNotFoundException;
-import no.bachelor26.Game.Task.TaskProcesser;
-import no.bachelor26.Game.Task.TaskSession;
-import no.bachelor26.Game.Task.TaskSession.TaskState;
-import no.bachelor26.Projection.TaskComponents;
-import no.bachelor26.Repository.TaskRepository;
+import no.bachelor26.Tasks.DTO.TaskProcessedResult;
+import no.bachelor26.Tasks.Exception.TaskNotFoundException;
+import no.bachelor26.Tasks.TaskSession.TaskState;
 import no.bachelor26.WebSocket.UserSession;
 import no.bachelor26.WebSocket.UserState;
 import no.bachelor26.WebSocket.WebSocketSender;

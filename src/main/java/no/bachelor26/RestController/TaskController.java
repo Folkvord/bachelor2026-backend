@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import no.bachelor26.Service.TaskService;
+import no.bachelor26.Tasks.TaskService;
 import tools.jackson.databind.JsonNode;
 
 @RestController

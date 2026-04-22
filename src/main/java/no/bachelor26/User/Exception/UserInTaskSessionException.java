@@ -1,4 +1,4 @@
-package no.bachelor26.Exception;
+package no.bachelor26.User.Exception;
 
 import java.util.UUID;
 

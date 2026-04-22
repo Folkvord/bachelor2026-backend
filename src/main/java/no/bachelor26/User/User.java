@@ -1,4 +1,4 @@
-package no.bachelor26.Entity;
+package no.bachelor26.User;
 
 import jakarta.persistence.*;
 import java.time.Instant;

@@ -1,6 +1,5 @@
-package no.bachelor26.Repository;
+package no.bachelor26.User;
 
-import no.bachelor26.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

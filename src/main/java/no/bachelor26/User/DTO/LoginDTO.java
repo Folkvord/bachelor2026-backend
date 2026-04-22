@@ -1,4 +1,4 @@
-package no.bachelor26.DTO;
+package no.bachelor26.User.DTO;
 
 public class LoginDTO {
     private String username;

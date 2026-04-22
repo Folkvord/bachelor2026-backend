@@ -1,4 +1,4 @@
-package no.bachelor26.RestController;
+package no.bachelor26.Security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import no.bachelor26.Security.JwtService;
 import no.bachelor26.Security.DTO.AuthResponseDTO;
 import no.bachelor26.User.DTO.LoginDTO;
 

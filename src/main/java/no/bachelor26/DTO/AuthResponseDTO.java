@@ -1,5 +1,8 @@
 package no.bachelor26.DTO;
 
+/**
+ *
+ */
 public class AuthResponseDTO {
     private String token;
 

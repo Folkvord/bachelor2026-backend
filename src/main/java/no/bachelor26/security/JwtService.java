@@ -13,9 +13,20 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
+/**
+ * Tjeneste for håndtering av JWT (JSON Web Tokens)
+ *!!!SECRET_KEY er hardkoda, må endres!!!
+ * Ansvar:
+ * Genererer tokens ved innlogging
+ * Hente informasjon fra tokens
+ * validere tokens
+ *
+ * Brukes av autentiseringssystemet for å sikre API endepunkter
+ * @Author Edwina Larsen
+ */
 @Service
 public class JwtService {
-
+//midlertidig SECRET_KEY, skal legges i miljø
     private static final String SECRET_KEY =
             "VGhpc0lzQVN1cGVyTG9uZ1NlY3JldEtleUZvckpXVFRlc3RpbmcxMjM0NTY3ODkw";
 
@@ -26,23 +37,54 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    /**
+     * Genererer en JWT for en autentisert bruker.
+     *
+     * @param userDetails info om brukeren
+     * @return signert JWT token
+     */
     public String generateToken(UserDetails userDetails) {
-        return null;
+        return Jwts.builder()
+                .subject(userDetails.getUsername())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_MS))
+                .signWith(getSigningKey())
+                .compact();
     }
 
+    /**
+     * Henter brukernavn (subject) fra JWT-token
+     * @param token JWT token
+     * @return brukernavn lagret i tokenet
+     */
     public String extractUsername(String token) {
-        return null;
+        return extractClaim(token, Claims::getSubject);
     }
 
+    /**
+     * Sjekker om JWT token er gyldig
+     * (hvis brukernavn matcher + token ikke er utløpt)
+     *
+     * @param token JWT token
+     * @param userDetails brukerdata
+     * @return true hvis token er gyldig
+     */
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        return false;
+        String username = extractUsername(token);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {
-        return false;
+        return extractClaim(token, Claims::getExpiration).before(new Date());
     }
 
-    private <T> T extractsClaim(String token, Function<Claims, T> claimsResolver) {
-        return null;
+    private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        Claims claims = Jwts.parser()
+                .verifyWith(getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+
+        return claimsResolver.apply(claims);
     }
 }

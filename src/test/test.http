@@ -1,0 +1,29 @@
+#registrer ny bruker
+POST http://localhost:8080/api/user/register
+Content-Type: application/json
+
+{
+  "username": "testuser4",
+  "email": "test4@test.com",
+  "password": "1234",
+  "passwordConfirm": "1234"
+}
+
+###
+#login og få JWT
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "testuser4",
+  "password": "1234"
+}
+
+###
+#uten token (fail)
+GET http://localhost:8080/api/task/1
+
+###
+#med token (burde funke)
+GET http://localhost:8080/api/task/1
+Authorization: Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJ0ZXN0dXNlcjQiLCJpYXQiOjE3NzQ5ODE2NzgsImV4cCI6MTc3NTA2ODA3OH0.anjmAnPK7e_6Eudy_2wnrYPn8gKQi6D-UrWpG5Jpml_DuLoqst1WZBzSkQVKatdG

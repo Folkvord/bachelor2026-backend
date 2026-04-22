@@ -123,7 +123,7 @@ public class MessageRouter {
                 break;
             
             case "cancel-task":
-                taskService.respondToCancelTask(userSession);
+                taskService.respondToCancelTask(userSession, msg);
                 break;
         
             default:

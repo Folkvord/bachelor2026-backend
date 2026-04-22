@@ -168,8 +168,6 @@ public class TaskService {
         );
         sender.send(userID, reply);
 
-        System.out.println("init sesjon");
-
         userSession.setState(UserState.PARSE_STANDBY);
     }
 
@@ -202,8 +200,6 @@ public class TaskService {
         reply.setStatus("success");
         switch(msg.getStatus()){
             case "success":
-                System.out.println("starta sesjon");
-
                 taskSession.setCurrentState(TaskState.RUNNING);
                 userSession.setState(UserState.ACTIVE_TASK);
                 break;
@@ -232,7 +228,12 @@ public class TaskService {
      * @param userID ID-en på klienten som kaller API-et
      * @param msg GameMessage
      */
-    public void respondToCancelTask(UserSession userSession){
+    public void respondToCancelTask(UserSession userSession, GameMessage msg){
+        
+        if(msg.getStatus().equals("error")){
+            System.out.println(" avbrytelse");
+        }
+
         cancelTaskSession(userSession.getUserID());
         userSession.setState(UserState.IDLE);
     }
@@ -250,6 +251,7 @@ public class TaskService {
         reply.setRequestID(msg.getRequestID());
         UUID userID = userSession.getUserID();
 
+        System.out.println("FLAGG");
         if(!activeSessions.containsKey(userID)){
             sender.sendError(userID, reply, "no session");
             return;

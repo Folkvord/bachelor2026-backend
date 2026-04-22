@@ -1,4 +1,4 @@
-package no.bachelor26.WebSocket;
+package no.bachelor26.User;
 
 public enum UserState {
     IDLE,

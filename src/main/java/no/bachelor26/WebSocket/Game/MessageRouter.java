@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import no.bachelor26.Tasks.TaskService;
-import no.bachelor26.WebSocket.UserSession;
+import no.bachelor26.User.UserSession;
 import no.bachelor26.WebSocket.WebSocketSender;
 import tools.jackson.databind.ObjectMapper;
 

@@ -21,7 +21,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
  * Deaktiverer session (stateless)
  *
  * Bruker JwtAuthenticationFilter for å validere tokens.
- * @Author Edwina Larsen
+ * @author Edwina Larsen
  */
 @Configuration
 @EnableWebSecurity

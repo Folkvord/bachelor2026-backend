@@ -65,7 +65,7 @@ public class GameHandler extends TextWebSocketHandler {
         GameMessage clientMessage = objectMapper.readValue(payload, GameMessage.class);
         UserSession userSession = (UserSession) session.getAttributes().get("userSession");
 
-        // Pass på tullinger som sender dupe meldinger
+        // Pass på tullinger som sender meldinger for kjapt
         synchronized(userSession){
             messageRouter.routeGameMessage(userSession, clientMessage);
         }

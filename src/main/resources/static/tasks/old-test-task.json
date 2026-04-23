@@ -1,55 +1,10 @@
 {
-    "objects": {
-        "main-server": {
-            "type": "server",
-            "hostname": "sus_scary_server"
-        },
-        "main-server-process": {
-            "type": "server-process",
-            "process-type": "basic-ftp-process",
-            "resources": [
-                "sus-file"
-            ]
-        },
-        "sus-file": {
-            "type": "file",
-            "name": "some_file.txt",
-            "metadata": "Size: 0b",
-            "content": "L + RATIO UNC"
-        }
+    "metadata": {
+        "extraDescription": "bla bla bla finn flagg",
+        "hintCosts": [1, 2, 3]
     },
-    "key-events": {
-        "task-start": {
-            "cmd": [
-                {
-                    "type": "open-port",
-                    "server": "main-server",
-                    "port": 21,
-                    "process": "main-server-process"
-                }
-            ]
-        },
-        "correct-flag-submit": {
-            "cmd": [
-                {
-                    "type": "close-port",
-                    "server": "main-server",
-                    "port": 21
-                }
-            ]
-        },
-        "wrong-flag-submit": {
-            "cmd": [
-
-            ]
-        }
-    },
-    "triggers": [
-
-    ],
-    "details": {
-        "hint-costs": [
-            0.25, 0.25, 0.5
-        ]
+    "data": {
+        "flagg": "${flag}",
+        "filinnhold": "Dette kommer RETT fra backenden"
     }
 }

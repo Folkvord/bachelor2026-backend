@@ -6,11 +6,14 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import no.bachelor26.Tasks.DTO.TaskProcessedResult;
 import no.bachelor26.Tasks.Exception.TaskNotFoundException;
+import no.bachelor26.Tasks.JSON.TaskData;
 import no.bachelor26.Tasks.TaskSession.TaskState;
 import no.bachelor26.User.UserSession;
 import no.bachelor26.User.UserState;
@@ -23,6 +26,8 @@ import tools.jackson.databind.exc.JsonNodeException;
 
 @Service
 public class TaskService {
+
+    final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     TaskRepository taskRepo;
@@ -48,7 +53,7 @@ public class TaskService {
      * @return Innholdet
      * @author Kristoffer Folkvord
      */
-    public JsonNode getTaskById(Long id){
+    public TaskData getTaskById(Long id){
         TaskComponents unprocessedTask = taskRepo.findTaskContentById(id).orElseThrow(
             () -> new TaskNotFoundException(id.toString())
         );
@@ -160,7 +165,9 @@ public class TaskService {
 
         reply.setStatus("success");
         reply.setData(
-            processedTask.getTask()
+            objectMapper.valueToTree(
+                processedTask.getTask()
+            )
         );
         sender.send(userID, reply);
 
@@ -341,6 +348,25 @@ public class TaskService {
      */
     public TaskSession getUserTaskSession(UUID userID){
         return activeSessions.get(userID);
+    }
+
+
+
+    
+    public void createTask(Long id, Map<String, Object> data, List<String> hints){
+
+        if(taskRepo.existsById(id)){
+            log.info("OppgaveID (" + id + ") eksisterer fra før av; hopper over.");
+            return;
+        }
+
+        Task task = new Task();
+        task.setId(id);
+        
+
+
+        task.setTaskData(null);
+
     }
 
 

@@ -1,6 +1,9 @@
 package no.bachelor26.Tasks;
 
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
+import no.bachelor26.Tasks.JSON.TaskData;
 
 @Data
 @Entity
@@ -22,6 +26,7 @@ public class Task {
     private String staticFlag;      // Dersom oppgaven har et dynamisk flagg, er denne kollonen null
 
     @Column(columnDefinition = "jsonb")
-    private String taskData;
+    @JdbcTypeCode(SqlTypes.JSON)
+    private TaskData taskData;
 
 }

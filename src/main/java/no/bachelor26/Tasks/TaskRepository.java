@@ -14,4 +14,6 @@ public interface TaskRepository extends JpaRepository<Task, Long>{
     """)
     Optional<TaskComponents> findTaskContentById(Long id);
 
+    boolean existsById(Long id);
+
 }

@@ -1,8 +1,5 @@
 {
-    "metadata": {
-        "extraDescription": "bla bla bla finn flagg",
-        "hintCosts": [1, 2, 3]
-    },
+    "extraDesc": "bla bla bla finn flagg",
     "data": {
         "flagg": "${flag}",
         "filinnhold": "Dette kommer RETT fra backenden"

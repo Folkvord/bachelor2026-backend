@@ -17,10 +17,10 @@ public class TaskController {
     TaskService taskService;
 
 
-    @GetMapping("/{id}")
+/*     @GetMapping("/{id}")
     public ResponseEntity<JsonNode> getTask(@PathVariable Long id){
         return ResponseEntity.ok(taskService.getTaskById(id));
-    }
+    } */
 
 
 

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import no.bachelor26.Tasks.DTO.TaskProcessedResult;
+import no.bachelor26.Tasks.JSON.TaskData;
 import tools.jackson.databind.ObjectMapper;
 
 @Component
@@ -31,7 +32,33 @@ public class TaskProcesser {
 
         String flag = determineFlag(unprocessedTask);
 
-        Matcher matcher = VARIABLE_REGEX.matcher(unprocessedTask.getTask());
+        TaskData taskData = unprocessedTask.getTask();
+
+        taskData.setExtraDesc(
+            processPart(unprocessedTask.getTask().getExtraDesc(), flag)
+        );
+
+        taskData.getData().forEach( (k, v) -> {
+            // Hvis ikke en string, kan ikke være variabel
+            if(!(v instanceof String)){
+                return;
+            }
+
+            taskData.getData().replace(
+                k, processPart((String) v, flag)    // Vurder å legg til brukernavnet
+            );
+
+        });
+
+        return new TaskProcessedResult(flag, taskData);
+
+    }
+
+
+
+    private String processPart(String part, String flag){
+
+        Matcher matcher = VARIABLE_REGEX.matcher(part);
         StringBuffer result = new StringBuffer();
 
         while(matcher.find()){
@@ -42,7 +69,7 @@ public class TaskProcesser {
                 matcher.appendReplacement(result, flag);
             }
             else if(variable.equals("${username}")){
-                matcher.appendReplacement(result, "BALLEFANT");
+                matcher.appendReplacement(result, "BRUKERNAVN :)");
             }
             else{
                 log.warn("Ukjent oppgavevariabel funnet: " + variable);
@@ -52,10 +79,7 @@ public class TaskProcesser {
 
         matcher.appendTail(result);
         
-        return new TaskProcessedResult(
-            flag,
-            objectMapper.readTree(result.toString().replace("\\\\${", "${"))
-        );
+        return result.toString().replace("\\\\${", "${");
 
     }
 

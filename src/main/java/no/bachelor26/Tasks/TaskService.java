@@ -11,10 +11,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import no.bachelor26.Tasks.DTO.TaskProcessedResult;
+import no.bachelor26.Tasks.DTO.ProcessedTaskComponents;
+import no.bachelor26.Tasks.DTO.RawTaskComponents;
 import no.bachelor26.Tasks.Exception.TaskNotFoundException;
-import no.bachelor26.Tasks.JSON.TaskData;
-import no.bachelor26.Tasks.TaskSession.TaskState;
+import no.bachelor26.Tasks.Hints.HintService;
+import no.bachelor26.Tasks.Hints.DTO.HintDTO;
+import no.bachelor26.Tasks.Hints.DTO.HintResult;
 import no.bachelor26.User.UserSession;
 import no.bachelor26.User.UserState;
 import no.bachelor26.WebSocket.WebSocketSender;
@@ -41,24 +43,12 @@ public class TaskService {
     @Autowired
     TaskProcesser taskProcesser;
 
+    @Autowired
+    HintService hintService;
+
+
 
     Map<UUID, TaskSession> activeSessions = new ConcurrentHashMap<>();
-
-
-
-    /**
-     * Henter innholdet til en oppgave (for sjapp debugging).
-     * 
-     * @param id ID-en til oppgaven som skal hentes
-     * @return Innholdet
-     * @author Kristoffer Folkvord
-     */
-    public TaskData getTaskById(Long id){
-        TaskComponents unprocessedTask = taskRepo.findTaskContentById(id).orElseThrow(
-            () -> new TaskNotFoundException(id.toString())
-        );
-        return taskProcesser.process(unprocessedTask).getTask();
-    }
 
 
 
@@ -69,12 +59,12 @@ public class TaskService {
      * @return Innholdet og det statiske flagget om et finnes
      * @author Kristoffer Folkvord
      */
-    public TaskComponents getUnprocessedTaskContentById(Long id){
+/*     public TaskComponents getUnprocessedTaskContentById(Long id){
         return taskRepo.findTaskContentById(id).orElseThrow(
             () -> new TaskNotFoundException(id.toString())
         );
     }
-
+ */
 
 
     /**
@@ -84,11 +74,25 @@ public class TaskService {
      * @return Det prosesserte innholdet til en oppgave og flagget
      * @author Kristoffer Folkvord
      */
-    public TaskProcessedResult getAndProcessTaskComponents(Long id) throws TaskNotFoundException{
-        TaskComponents unprocessedTask = taskRepo.findTaskContentById(id).orElseThrow(
+    public ProcessedTaskComponents getAndProcessTaskComponents(Long id) throws TaskNotFoundException{
+        RawTaskComponents rawTaskComponents = taskRepo.findTaskContentById(id).orElseThrow(
             () -> new TaskNotFoundException(id.toString())
         );
-        return taskProcesser.process(unprocessedTask);
+
+        // Finn ut flagget her
+        String flag = rawTaskComponents.getStaticFlag() == null ? 
+            "BunOS{BUNNI}" : rawTaskComponents.getStaticFlag();
+
+        ProcessedTaskComponents result = new ProcessedTaskComponents();
+        result.setFlag(flag);
+        result.setData(
+            taskProcesser.process(rawTaskComponents.getData(), flag)
+        );
+        result.setHints(
+            hintService.getTaskHints(id)
+        );
+
+        return result;
     }
 
 
@@ -148,16 +152,16 @@ public class TaskService {
 
 
         // Hent prosessert oppgave
-        TaskProcessedResult processedTask;
+        ProcessedTaskComponents processedTaskComponents;
         try{
-            processedTask = getAndProcessTaskComponents(taskID);
+            processedTaskComponents = getAndProcessTaskComponents(taskID);
         } catch(TaskNotFoundException e){
             sender.sendError(userID, reply, "no access");
             return;
         }
 
         // WTF SKAL SKJE DERSOM DET ER EN DUPE SESJON
-        boolean startedSession = startTaskSession(userID, taskID, processedTask.getFlag());
+        boolean startedSession = startTaskSession(userID, taskID, processedTaskComponents.getFlag(), processedTaskComponents.getHints());
         if(!startedSession){
             sender.sendError(userID, reply, "dupe session");
             return;
@@ -166,7 +170,7 @@ public class TaskService {
         reply.setStatus("success");
         reply.setData(
             objectMapper.valueToTree(
-                processedTask.getTask()
+                processedTaskComponents.getData()
             )
         );
         sender.send(userID, reply);
@@ -194,27 +198,18 @@ public class TaskService {
             return;
         }
 
-        if(!taskSession.inStandby()){
-            userSession.setState(UserState.IDLE);
-            sender.sendError(userID, reply, "invalid session state");
-            return;
-        }
-
         reply.setStatus("success");
         switch(msg.getStatus()){
             case "success":
-                taskSession.setCurrentState(TaskState.RUNNING);
                 userSession.setState(UserState.ACTIVE_TASK);
                 break;
 
             case "error":
-                taskSession.setCurrentState(TaskState.STOPPED);
                 userSession.setState(UserState.IDLE);
                 cancelTaskSession(userID);
                 break;
 
             default:
-                taskSession.setCurrentState(TaskState.STOPPED);
                 userSession.setState(UserState.IDLE);
                 sender.sendError(userID, reply, "wtf");
                 return;
@@ -266,11 +261,6 @@ public class TaskService {
         }
 
         TaskSession taskSession = getUserTaskSession(userID);
-        if(!taskSession.isRunning()){
-            sender.sendError(userID, reply, "invalid task state");
-            return;
-        }
-
         String flag = "wiener";
         try{
             flag = msg.getData().get("flag").asString();
@@ -293,6 +283,54 @@ public class TaskService {
     }
 
     
+
+    /**
+     * Henter et hint til en bruker i en oppgavesesjon
+     * 
+     * @param userSession Spillerens tilstand
+     * @param msg GameMessage
+     * @author Kristoffer Folkvord
+     */
+    public void respondToGetHint(UserSession userSession, GameMessage msg){
+        GameMessage reply = new GameMessage("get-hint");
+        reply.setRequestID(msg.getRequestID());
+        UUID userID = userSession.getUserID();
+
+        if(msg.getData() == null){
+            sender.sendError(userID, reply, "no data");
+            log.error("UserID (" + userID + "): Hintmelding uten data");
+            return;
+        }
+
+        if(!msg.getData().has("index")){
+            sender.sendError(userID, reply, "invalid data format");
+            log.error("UserID (" + userID + "): Hintmelding med dårlig innhold");
+            return;
+        }
+        
+        int index = msg.getData().get("index").asInt();
+        HintResult hintResult = activeSessions.get(userID).getHint(index);
+        if(hintResult.getStatus() != HintResult.Status.OK){
+            sender.sendError(userID, reply, "invalid-hint");
+
+            // Hvis dette er sant, kan det hende at brukeren har funnet
+            // en sårbarhet, eller at de sender sine egne meldinger; flagg dem.
+            if(hintResult.getStatus() == HintResult.Status.INVALID_HINT){
+                log.error("UserID (" + userID + "): Hintmelding med ugyldig indeks");
+            }
+            
+            return;
+        }
+
+        String hint = hintResult.getHint();
+        reply.setStatus("success");
+        reply.setData(
+            objectMapper.readTree("{\"hint\":\"" + hint + "\"}")
+        );
+
+        sender.send(userID, reply);
+    }
+
     
     /**
      * Starter en ny oppgavesesjon hvis ikke en allerede eksisterer.
@@ -300,13 +338,13 @@ public class TaskService {
      * @param userID ID-en til klienten som starter sesjonen
      * @param taskID ID-en til oppgaven sesjonen starter med
      */
-    public boolean startTaskSession(UUID userID, Long taskID, String flag){
+    public boolean startTaskSession(UUID userID, Long taskID, String flag, List<HintDTO> hints){
         if(activeSessions.containsKey(userID)){
             return false;
         }
 
         activeSessions.put(userID, new TaskSession(
-            userID, taskID, flag
+            userID, taskID, flag, hints
         ));
 
         return true;

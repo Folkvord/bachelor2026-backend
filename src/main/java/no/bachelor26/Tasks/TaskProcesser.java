@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import no.bachelor26.Tasks.DTO.TaskProcessedResult;
 import no.bachelor26.Tasks.JSON.TaskData;
 import tools.jackson.databind.ObjectMapper;
 
@@ -28,29 +27,25 @@ public class TaskProcesser {
 
 
     
-    public TaskProcessedResult process(TaskComponents unprocessedTask){
-
-        String flag = determineFlag(unprocessedTask);
-
-        TaskData taskData = unprocessedTask.getTask();
+    public TaskData process(TaskData taskData, String flag){
 
         taskData.setExtraDesc(
-            processPart(unprocessedTask.getTask().getExtraDesc(), flag)
+            processPart(taskData.getExtraDesc(), flag)
         );
 
-        taskData.getData().forEach( (k, v) -> {
+        taskData.getData().forEach( (key, value) -> {
             // Hvis ikke en string, kan ikke være variabel
-            if(!(v instanceof String)){
+            if(!(value instanceof String)){
                 return;
             }
 
             taskData.getData().replace(
-                k, processPart((String) v, flag)    // Vurder å legg til brukernavnet
+                key, processPart((String) value, flag)    // Vurder å legg til brukernavnet
             );
 
         });
 
-        return new TaskProcessedResult(flag, taskData);
+        return taskData;
 
     }
 

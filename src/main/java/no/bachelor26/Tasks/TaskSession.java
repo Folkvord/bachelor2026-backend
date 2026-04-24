@@ -1,60 +1,84 @@
 package no.bachelor26.Tasks;
 
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import lombok.Data;
-import no.bachelor26.WebSocket.WebSocketSender;
+import no.bachelor26.Tasks.Hints.DTO.HintDTO;
+import no.bachelor26.Tasks.Hints.DTO.HintResult;
 
 @Data
 public class TaskSession {
 
-    @Autowired 
-    WebSocketSender message;
-
-
     private UUID userID;
     private Long taskID;
     private LocalTime taskStart;
+
     private String flag;
+    private List<HintDTO> hints;
 
-    private TaskState currentState = TaskState.STANDBY;
 
-    public TaskSession(UUID userID, Long taskID, String flag){
+    public TaskSession(
+        UUID userID,
+        Long taskID,
+        String flag,
+        List<HintDTO> hints
+    ){
         this.userID = userID;
         this.taskID = taskID;
         this.flag = flag;
+        this.hints = hints;
         taskStart = LocalTime.now();
     }
-    
+
 
 
     // Midlertidig validering
-    public boolean validateFlag(String flag){
-        return flag.equals(this.flag);
+    public boolean validateFlag(String guessedFlag){
+        return guessedFlag.equals(this.flag);
     }
 
 
 
-    public boolean inStandby(){
-        return currentState == TaskState.STANDBY;
+    /**
+     * Henter hintet som en {@code Optional<String>}.
+     * Failer dersom hintet ikke eksisterer eller om det har blitt hentet før
+     * 
+     * @param index Indeksen på hintet
+     * @return {@code Optional<String>} med eller uten hintet
+     */
+    public HintResult getHint(int index){
+        Optional<HintDTO> possibleHint = hints.stream()
+            .filter(h -> h.getIndex() == index-1)
+            .findFirst();
+
+        HintResult result = new HintResult();
+
+        // Hvis dette skjer, kan det hende at 
+        // brukeren prøver å hacke oss!!!
+        if(possibleHint.isEmpty()){
+            result.setStatus(HintResult.Status.INVALID_HINT);
+            return result;
+        }
+
+        HintDTO hint = possibleHint.get();
+        if(hint.isRetrieved()){
+            result.setStatus(HintResult.Status.RETRIEVED);
+            return result;
+        }
+
+        hint.setRetrieved(true);
+
+        // Påvirk statistikk / poeng / whatever
+
+        result.setStatus(HintResult.Status.OK);
+        result.setHint(hint.getHint());
+
+        return result;
     }
 
-
-
-    public boolean isRunning(){
-        return currentState == TaskState.RUNNING;
-    }
-
-
-
-    public enum TaskState{
-        STANDBY,
-        RUNNING,
-        STOPPED
-    }
 
 }
 

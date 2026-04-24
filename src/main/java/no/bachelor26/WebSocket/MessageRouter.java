@@ -126,6 +126,10 @@ public class MessageRouter {
                 taskService.respondToCancelTask(userSession, msg);
                 break;
         
+            case "get-hint":
+                taskService.respondToGetHint(userSession, msg);
+                break;
+
             default:
                 handleInvalidMessageType(userSession, msg);
                 break;

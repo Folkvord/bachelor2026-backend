@@ -19,4 +19,6 @@ public interface HintRepository extends JpaRepository<Hint, Long> {
     """)
     List<HintDTO> findHintsByTaskId(Long taskId);
 
+    boolean existsByTaskIdAndHintIndex(Long taskId, Short hintIndex);
+
 }

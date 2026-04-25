@@ -59,14 +59,21 @@ public class UserService {
     }
 
 
-/*     // Gir en bruker tilgang til de 9 introoppgavene
-    private void grantUserIntroTasks(User user){
 
-        for(int i = 1; i <= 9; i++){
-            Long taskID = Long.valueOf(i);
-            taskService.grantTaskAccess(user, taskID);
-        }
-
-    } */
+    /**
+     * Lager en bruker uten sjekker som {@code registerUser()}
+     * 
+     * @param username Brukernavnet
+     * @param email Eposten
+     * @param password Passordet
+     * @author Kristoffer Folkvord
+     */
+    public void createSpecialUser(String username, String email, String password, User.Role role){
+        User user = new User();
+        user.setUsername(username);
+        user.setPasswordHash(encoder.encode(password));
+        user.setRole(role);
+        userRepo.save(user);
+    }
 
 }

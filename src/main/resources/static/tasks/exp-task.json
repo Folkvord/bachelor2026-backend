@@ -1,0 +1,17 @@
+{
+    "id": 9,
+    "taskData": {
+        "extraDesc": "get money",
+        "data": {
+          "flagg": "${flag}",
+          "serverIP": "1.2.3.4",
+          "filinnhold": "Dette kommer RETT fra backenden: ${flag}",
+          "serverPort": 8080
+        }
+    },
+    "hints": [
+        {"hint": "be ballin", "cost": 10},
+        {"hint": "penitent one, thy shame shall be the seed of our redemption", "cost": 20},
+        {"hint": "keep ballin", "cost": 50}
+    ]
+}

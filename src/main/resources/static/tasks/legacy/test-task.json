@@ -2,6 +2,6 @@
     "extraDesc": "bla bla bla finn flagg",
     "data": {
         "flagg": "${flag}",
-        "filinnhold": "Dette kommer RETT fra backenden"
+        "filinnhold": "Dette kommer RETT fra backenden: ${flag}"
     }
 }

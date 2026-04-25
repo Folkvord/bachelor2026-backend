@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import no.bachelor26.Tasks.DTO.ProcessedTaskComponents;
 import no.bachelor26.Tasks.DTO.RawTaskComponents;
+import no.bachelor26.Tasks.DTO.TaskSeed;
 import no.bachelor26.Tasks.Exception.TaskNotFoundException;
 import no.bachelor26.Tasks.Hints.HintService;
 import no.bachelor26.Tasks.Hints.DTO.HintDTO;
@@ -31,40 +32,16 @@ public class TaskService {
 
     final Logger log = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    TaskRepository taskRepo;
+    @Autowired TaskRepository taskRepo;
+    @Autowired ObjectMapper objectMapper;
+    @Autowired WebSocketSender sender;
+    @Autowired TaskProcesser taskProcesser;
+    @Autowired HintService hintService;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    WebSocketSender sender;
-
-    @Autowired
-    TaskProcesser taskProcesser;
-
-    @Autowired
-    HintService hintService;
-
-
+    static final String TASK_FILE_PATH = "/static/tasks/";
 
     Map<UUID, TaskSession> activeSessions = new ConcurrentHashMap<>();
 
-
-
-    /**
-     * Henter innholdet til en oppgave.
-     * 
-     * @param id ID-en til oppgaven som skal hentes
-     * @return Innholdet og det statiske flagget om et finnes
-     * @author Kristoffer Folkvord
-     */
-/*     public TaskComponents getUnprocessedTaskContentById(Long id){
-        return taskRepo.findTaskContentById(id).orElseThrow(
-            () -> new TaskNotFoundException(id.toString())
-        );
-    }
- */
 
 
     /**
@@ -391,20 +368,18 @@ public class TaskService {
 
 
     
-    public void createTask(Long id, Map<String, Object> data, List<String> hints){
-
-        if(taskRepo.existsById(id)){
-            log.info("OppgaveID (" + id + ") eksisterer fra før av; hopper over.");
+    public void createTask(TaskSeed seed){
+        
+        if(taskRepo.existsById(seed.getId())){
+            log.warn("OppgaveID (" + seed.getId() + ") eksisterer; hopper over.");
             return;
         }
-
-        Task task = new Task();
-        task.setId(id);
         
+        Task task = new Task();
+        task.setId(seed.getId());
+        task.setTaskData(seed.getTaskData());
 
-
-        task.setTaskData(null);
-
+        taskRepo.save(task);
     }
 
 

@@ -6,8 +6,6 @@ import org.hibernate.type.SqlTypes;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -19,8 +17,7 @@ import no.bachelor26.Tasks.JSON.TaskData;
 public class Task {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;    // Vi skal ikke generere denne, den settes i oppgavefilene
 
     @Column(nullable = true)        // For de oppgavene som har et statisk flagg
     private String staticFlag;      // Dersom oppgaven har et dynamisk flagg, er denne kollonen null

@@ -34,7 +34,7 @@ public class User {
     // SOFIE: rolle kan ikke oppdateres (sikkerhetsaspekt), kan ikke være tom
     @Enumerated(EnumType.STRING)
     @Column(nullable=false, updatable=false)
-    private Role role = Role.DEV;
+    private Role role = Role.STUDENT;
     
     @Column(nullable = false, updatable = false)
     private Instant createdAt = Instant.now();

@@ -80,15 +80,4 @@ public class TaskProcesser {
 
 
 
-    private String determineFlag(TaskComponents taskComponents){
-        String flag = taskComponents.getStaticFlag();
-        if(flag == null || flag.isBlank()){
-            // Generer flagget
-            flag = "CTF{ LOLL DETTE ER FLAGGET ASS }";
-        }
-        return flag;
-    }
-
-
-
 }

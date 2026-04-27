@@ -4,6 +4,7 @@ import org.springframework.core.io.Resource;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +13,15 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import no.bachelor26.Tasks.TaskService;
 import no.bachelor26.Tasks.DTO.TaskSeed;
+import no.bachelor26.Tasks.Exception.TaskFileException;
 import no.bachelor26.Tasks.Hints.HintService;
 import no.bachelor26.User.UserService;
+import no.bachelor26.User.User;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
 /**
@@ -32,6 +38,7 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired HintService hintService;
     @Autowired UserService userService;
     @Autowired ObjectMapper objectMapper;
+    @Autowired Validator validator;
 
 
     public void run(String... args){
@@ -65,9 +72,16 @@ public class DataInitializer implements CommandLineRunner {
             TaskSeed taskSeed;
             try(InputStream is = resource.getInputStream()){
                 taskSeed = objectMapper.readValue(is, TaskSeed.class);
+                validateTaskSeed(taskSeed);
             } catch(IOException e){
-                log.error("Kunne ikke parse json ;(");
-                return;
+                log.error("Kunne ikke parse oppgavefil: " + resource.getFilename());
+                continue;
+            } catch(JacksonException e){
+                log.error("Kunne ikke skape TaskSeed av oppgavefilen: " + resource.getFilename());
+                continue;
+            } catch(TaskFileException e){
+                log.error("Oppgavefil er dårlig strukturert: " + resource.getFilename());
+                continue;
             }
 
             taskService.createTask(taskSeed);
@@ -81,17 +95,34 @@ public class DataInitializer implements CommandLineRunner {
     
     /**
      * Initialiserer statiske brukere, som hovedadminbrukeren og utviklerenes brukere
-     * 
-     * @author Kristoffer Folkvord
      */
     private void initializeStaticUsers(){
-
-        /* userService.createSpecialUser(
+        
+        userService.initializeStaticUsers(
             "admin",
-            "admin@admin.admin",
+            "admin@admin.no",
             "ikkehackmeg;(",
             User.Role.ADMIN
-        ); */
+        );
+
+    }
+
+
+
+    /**
+     * Hjelpefunksjon for å validere om oppgavefrøet er gyldig
+     * 
+     * @param seed Oppgavefrøet
+     * @throws TaskFileException
+     */
+    private void validateTaskSeed(TaskSeed seed) throws TaskFileException{
+
+        Set<ConstraintViolation<TaskSeed>> violations = 
+            validator.validate(seed);
+
+        if(!violations.isEmpty()){
+            throw new TaskFileException(violations.toString());
+        }
 
     }
 

@@ -68,9 +68,15 @@ public class UserService {
      * @param password Passordet
      * @author Kristoffer Folkvord
      */
-    public void createSpecialUser(String username, String email, String password, User.Role role){
+    public void initializeStaticUsers(String username, String email, String password, User.Role role){
+
+        if(userRepo.existsByUsername(username)){
+            return;
+        }
+
         User user = new User();
         user.setUsername(username);
+        user.setEmail(email);
         user.setPasswordHash(encoder.encode(password));
         user.setRole(role);
         userRepo.save(user);

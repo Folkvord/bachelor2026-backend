@@ -18,6 +18,8 @@ import no.bachelor26.Tasks.Exception.TaskNotFoundException;
 import no.bachelor26.Tasks.Hints.HintService;
 import no.bachelor26.Tasks.Hints.DTO.HintDTO;
 import no.bachelor26.Tasks.Hints.DTO.HintResult;
+import no.bachelor26.Tasks.TaskSessions.TaskSession;
+import no.bachelor26.Tasks.TaskSessions.TaskSessionService;
 import no.bachelor26.User.UserSession;
 import no.bachelor26.User.UserState;
 import no.bachelor26.WebSocket.WebSocketSender;
@@ -37,6 +39,7 @@ public class TaskService {
     @Autowired WebSocketSender sender;
     @Autowired TaskProcesser taskProcesser;
     @Autowired HintService hintService;
+    @Autowired TaskSessionService taskSessionService;
 
     static final String TASK_FILE_PATH = "/static/tasks/";
 
@@ -182,8 +185,8 @@ public class TaskService {
                 break;
 
             case "error":
+                taskSessionService.cancelTaskSession(userID);
                 userSession.setState(UserState.IDLE);
-                cancelTaskSession(userID);
                 break;
 
             default:
@@ -204,12 +207,14 @@ public class TaskService {
      * @param msg GameMessage
      */
     public void respondToCancelTask(UserSession userSession, GameMessage msg){
+        UUID userID = userSession.getUserID();
         
         if(msg.getStatus().equals("error")){
-            System.out.println(" avbrytelse");
+            String reason = msg.getData().get("desc").asString();   // Tilgi meg Ian
+            log.error("UserID (" + userID + "): Avbrøt oppgavesesjonen sin på grunn av en feil: " + reason + ".");
         }
 
-        cancelTaskSession(userSession.getUserID());
+        taskSessionService.cancelTaskSession(userID);
         userSession.setState(UserState.IDLE);
     }
 
@@ -226,7 +231,6 @@ public class TaskService {
         reply.setRequestID(msg.getRequestID());
         UUID userID = userSession.getUserID();
 
-        System.out.println("FLAGG");
         if(!activeSessions.containsKey(userID)){
             sender.sendError(userID, reply, "no session");
             return;
@@ -237,7 +241,6 @@ public class TaskService {
             return;
         }
 
-        TaskSession taskSession = getUserTaskSession(userID);
         String flag = "wiener";
         try{
             flag = msg.getData().get("flag").asString();
@@ -246,10 +249,10 @@ public class TaskService {
             return;
         }
 
-        String result = taskSession.validateFlag(flag) ? "correct" : "wrong";
+        String result = taskSessionService.validateFlag(userID, flag) ? "correct" : "wrong";
         if(result.equals("correct")){
+            taskSessionService.cancelTaskSession(userID);
             userSession.setState(UserState.IDLE);
-            cancelTaskSession(userID);
         }
 
         reply.setStatus("success");
@@ -288,7 +291,8 @@ public class TaskService {
         }
 
         int index = msg.getData().get("index").asInt();
-        HintResult hintResult = activeSessions.get(userID).getHint(index);
+        HintResult hintResult = taskSessionService.retrieveHint(userID, index);
+
         if(hintResult.getStatus() != HintResult.Status.OK){
             sender.sendError(userID, reply, "invalid-hint");
 
@@ -327,18 +331,6 @@ public class TaskService {
         ));
 
         return true;
-    }
-
-
-
-    /**
-     * Avbryter en oppgavesesjon ved å fjerne den fra activeSessions.
-     * 
-     * @param userID ID-en til klientens oppgavesesjon
-     * @return 
-     */
-    public boolean cancelTaskSession(UUID userID){
-        return activeSessions.remove(userID) != null;
     }
 
 

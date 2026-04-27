@@ -82,7 +82,6 @@ public class WebSocketSender {
      * @param userID ID-en på brukeren som får meldingen
      * @param errMsg GameMessage-meldingen som sendes
      * @param errDesc En beskrivelse av feilen
-     * @throws Exception
      * @author Kristoffer Folkvord
      */
     public void sendError(UUID userID, GameMessage errMsg, String errDesc){

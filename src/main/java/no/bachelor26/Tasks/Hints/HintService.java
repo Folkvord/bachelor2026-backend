@@ -31,7 +31,7 @@ public class HintService {
     /**
      * Initialiserer alle hintene til en gitt oppgave
      * 
-     * @param seed Oppgavefrøet skapt fra en oppgavefil i oppgavekatalogen oppgaveoppgave (oppgave)
+     * @param seed Oppgavefrøet
      */
     public void createHints(TaskSeed seed){
 
@@ -40,7 +40,7 @@ public class HintService {
             HintDTO hint = hints.get(hintIndex);
 
             if(hintRepo.existsByTaskIdAndHintIndex(seed.getId(), Short.valueOf(hintIndex))){
-                log.warn("OppgaveID (" + seed.getId() + "), hintindeks (" + hintIndex + ") finnes; hopper over.");
+                log.info("OppgaveID (" + seed.getId() + ") - hintindeks (" + hintIndex + ") finnes. Hopper over.");
                 continue;
             }
 
@@ -49,12 +49,11 @@ public class HintService {
             newHint.setHintIndex(Short.valueOf(hintIndex));
             newHint.setCost(hint.getCost());
             newHint.setTask(
-                entityManager.getReference(
-                    Task.class, seed.getId()
-                )
+                entityManager.getReference(Task.class, seed.getId())
             );
 
             hintRepo.save(newHint);
+            log.info("OppgaveID (" + seed.getId() + ") - hintindeks (" + hintIndex + ") opprettet.");
         }
 
 

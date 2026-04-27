@@ -249,12 +249,14 @@ public class TaskService {
         String result = taskSession.validateFlag(flag) ? "correct" : "wrong";
         if(result.equals("correct")){
             userSession.setState(UserState.IDLE);
+            cancelTaskSession(userID);
         }
 
         reply.setStatus("success");
         reply.setData(
             objectMapper.readTree("{\"result\":\"" + result + "\"}")
         );
+
 
         sender.send(userID, reply);
     }
@@ -284,7 +286,7 @@ public class TaskService {
             log.error("UserID (" + userID + "): Hintmelding med dårlig innhold");
             return;
         }
-        
+
         int index = msg.getData().get("index").asInt();
         HintResult hintResult = activeSessions.get(userID).getHint(index);
         if(hintResult.getStatus() != HintResult.Status.OK){
@@ -295,7 +297,7 @@ public class TaskService {
             if(hintResult.getStatus() == HintResult.Status.INVALID_HINT){
                 log.error("UserID (" + userID + "): Hintmelding med ugyldig indeks");
             }
-            
+
             return;
         }
 
@@ -367,11 +369,15 @@ public class TaskService {
 
 
 
-    
+    /**
+     * Initialiserer en rad i oppgavetabellen fra et oppgavefrø
+     * 
+     * @param seed Oppgavefrøet
+     */
     public void createTask(TaskSeed seed){
         
         if(taskRepo.existsById(seed.getId())){
-            log.warn("OppgaveID (" + seed.getId() + ") eksisterer; hopper over.");
+            log.info("OppgaveID (" + seed.getId() + ") eksisterer. Hopper over.");
             return;
         }
         
@@ -380,6 +386,7 @@ public class TaskService {
         task.setTaskData(seed.getTaskData());
 
         taskRepo.save(task);
+        log.info("OppgaveID (" + seed.getId() + ") opprettet.");
     }
 
 

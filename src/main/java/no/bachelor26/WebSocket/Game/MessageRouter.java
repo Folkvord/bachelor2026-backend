@@ -1,4 +1,4 @@
-package no.bachelor26.WebSocket;
+package no.bachelor26.WebSocket.Game;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import no.bachelor26.Tasks.TaskService;
-import no.bachelor26.User.UserSession;
-import no.bachelor26.WebSocket.Game.GameMessage;
+import no.bachelor26.User.UserSession.UserSession;
+import no.bachelor26.WebSocket.WebSocketSender;
 import tools.jackson.databind.ObjectMapper;
 
 @Service

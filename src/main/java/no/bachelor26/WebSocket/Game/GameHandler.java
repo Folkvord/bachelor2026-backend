@@ -12,8 +12,7 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import no.bachelor26.Tasks.TaskSessions.TaskSessionService;
-import no.bachelor26.User.UserSession;
-import no.bachelor26.WebSocket.MessageRouter;
+import no.bachelor26.User.UserSession.UserSession;
 import no.bachelor26.WebSocket.WebSocketSender;
 import tools.jackson.databind.ObjectMapper;
 
@@ -49,7 +48,6 @@ public class GameHandler extends TextWebSocketHandler {
 
         sender.removeSession(userID);
         taskSessionService.cancelTaskSession(userID);
-
     }
     
 

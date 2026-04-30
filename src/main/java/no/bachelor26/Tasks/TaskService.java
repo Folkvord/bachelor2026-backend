@@ -20,8 +20,8 @@ import no.bachelor26.Tasks.Hints.DTO.HintDTO;
 import no.bachelor26.Tasks.Hints.DTO.HintResult;
 import no.bachelor26.Tasks.TaskSessions.TaskSession;
 import no.bachelor26.Tasks.TaskSessions.TaskSessionService;
-import no.bachelor26.User.UserSession;
-import no.bachelor26.User.UserState;
+import no.bachelor26.User.UserSessions.UserSession;
+import no.bachelor26.User.UserSessions.UserState;
 import no.bachelor26.WebSocket.WebSocketSender;
 import no.bachelor26.WebSocket.Game.GameMessage;
 import tools.jackson.databind.JsonNode;
@@ -260,7 +260,6 @@ public class TaskService {
             objectMapper.readTree("{\"result\":\"" + result + "\"}")
         );
 
-
         sender.send(userID, reply);
     }
 
@@ -357,6 +356,17 @@ public class TaskService {
      */
     public TaskSession getUserTaskSession(UUID userID){
         return activeSessions.get(userID);
+    }
+
+
+
+    /**
+     * Avbryter en oppgavesesjon
+     * 
+     * @param userID BrukerID
+     */
+    public void cancelTaskSession(UUID userID){
+        taskSessionService.cancelTaskSession(userID);
     }
 
 

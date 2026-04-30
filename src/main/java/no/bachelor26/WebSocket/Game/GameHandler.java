@@ -11,8 +11,8 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import no.bachelor26.Tasks.TaskSessions.TaskSessionService;
-import no.bachelor26.User.UserSession.UserSession;
+import no.bachelor26.Tasks.TaskService;
+import no.bachelor26.User.UserSessions.UserSession;
 import no.bachelor26.WebSocket.WebSocketSender;
 import tools.jackson.databind.ObjectMapper;
 
@@ -24,8 +24,8 @@ public class GameHandler extends TextWebSocketHandler {
     @Autowired ObjectMapper objectMapper;
     @Autowired MessageRouter messageRouter;
     @Autowired WebSocketSender sender;
-    @Autowired TaskSessionService taskSessionService;
-
+    @Autowired TaskService taskService;
+    
 
 
     @Override
@@ -47,10 +47,10 @@ public class GameHandler extends TextWebSocketHandler {
             .get("userSession")).getUserID();
 
         sender.removeSession(userID);
-        taskSessionService.cancelTaskSession(userID);
+        taskService.cancelTaskSession(userID);
     }
-    
 
+    
 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> msg) throws Exception{

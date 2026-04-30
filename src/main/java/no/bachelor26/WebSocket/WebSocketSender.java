@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import no.bachelor26.WebSocket.Exception.DupeUserSessionException;
+import no.bachelor26.WebSocket.Exception.NoUserSessionException;
+import no.bachelor26.WebSocket.Exception.UnexpectedSessionShutdownException;
 import no.bachelor26.WebSocket.Game.GameMessage;
 import tools.jackson.databind.ObjectMapper;
 
@@ -20,8 +23,7 @@ public class WebSocketSender {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    @Autowired
-    ObjectMapper objectMapper;
+    @Autowired ObjectMapper objectMapper;
 
     private Map<UUID, WebSocketSession> activeSessions = new ConcurrentHashMap<>();
 
@@ -35,7 +37,7 @@ public class WebSocketSender {
      */
     public void appendSession(UUID userID, WebSocketSession session){
         if(activeSessions.containsKey(userID)){
-            //throw new UserAlreadyHasWebSocketSessionException();  // fyfan trenger et nytt navn
+            throw new DupeUserSessionException();
         }
         activeSessions.put(userID, session);
     }
@@ -48,9 +50,7 @@ public class WebSocketSender {
      * @param userID ID-en på brukeren som eier sesjonen
      */
     public void removeSession(UUID userID){
-        if(activeSessions.containsKey(userID)){
-            activeSessions.remove(userID);
-        }
+        activeSessions.remove(userID);
     }
 
 
@@ -63,15 +63,28 @@ public class WebSocketSender {
      * @author Kristoffer Folkvord
      */
     public void send(UUID userID, GameMessage msg){
+        
+        WebSocketSession session;
         try{
-            getSession(userID)
-                .sendMessage(new TextMessage(
-                    objectMapper.writeValueAsBytes(msg)
-                )
-            );
-        } catch(IOException e){
+            session = getSession(userID);
+        } catch(NoUserSessionException e){  // Forbindelsen er borte!!!
+            log.error("Brukerens (ID: " + userID + ") WebSocket-sesjonsobjekt fantes ikke i activeSession");
+            return;
+        } catch(UnexpectedSessionShutdownException e){  // Forbindelsen er dau
+            log.error("Brukerens (ID: " + userID + ") WebSocket-sesjonsobjekt var allerede lukket");
+            handleDisconnect(userID);
+            return;
+        }
+
+        try{
+            session.sendMessage(new TextMessage(
+                objectMapper.writeValueAsBytes(msg)
+            ));
+        } catch(IOException e){     // Forbindelsen daua git
+            log.error("Brukerens (ID: " + userID + ") kunne ikke sende meldingen (IOException)");
             handleDisconnect(userID);
         }
+
     }
 
 
@@ -89,13 +102,8 @@ public class WebSocketSender {
         errMsg.setData(
             objectMapper.readTree("{\"desc\":\"" + errDesc + "\"}")
         );
+
         send(userID, errMsg);
-    }
-
-
-
-    private void handleDisconnect(UUID userID){
-        log.error("Kunne ikke sende melding til: (" + userID + ")");    // SKAL RYDDE OPP
     }
 
 
@@ -104,13 +112,37 @@ public class WebSocketSender {
      * Henter et sesjonsobjekt basert på ID-en til brukeren som eier det.
      * 
      * @param userID ID-en på brukeren som eier sesjonen
+     * @throws NoUserSessionExceptino Dersom brukersesjonen ikke finnes i hashmappet
+     * @throws UnexpectedSessionShutdownException Dersom WS-sesjonen har lukker
      * @return Sesjonsobjektet
      */
-    private WebSocketSession getSession(UUID userID){
+    private WebSocketSession getSession(UUID userID) 
+        throws NoUserSessionException, UnexpectedSessionShutdownException{
         if(!activeSessions.containsKey(userID)){
-            // throw new WebSocketSessionNonExistantException();    // enda en banger
+            throw new NoUserSessionException();
         }
-        return activeSessions.get(userID);
+        
+        WebSocketSession session = activeSessions.get(userID);
+        if(!session.isOpen()){
+            throw new UnexpectedSessionShutdownException();
+        }
+
+        return session;
+    }
+
+
+
+    /**
+     * Kjører når en forbindelsesfeil oppstår; lukker forbindeslsen ordentlig.
+     * 
+     * @param userID BrukerID-en
+     */
+    private void handleDisconnect(UUID userID){
+        try{
+            activeSessions.get(userID).close();;
+        } catch(IOException ignore){
+            // Ignore dat bih
+        }
     }
 
 }

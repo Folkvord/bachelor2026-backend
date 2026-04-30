@@ -1,4 +1,4 @@
-package no.bachelor26.User;
+package no.bachelor26.User.UserSessions;
 
 public enum UserState {
     IDLE,

@@ -1,0 +1,16 @@
+{
+    "id": 2,
+    "taskData": {
+        "extraDesc": "",
+        "data": {
+          "flagg": "${flag}",
+          "author": "Unknown",
+          "image_name": "carrotEater"
+        }
+    },
+    "hints": [
+        {"hint": "maybe there is a carrot related image in the picture folder?", "cost": 10},
+        {"hint": "try /home/pictures/carrotEater in the metaExtract tool, and see if you find something that looks different", "cost": 25},
+        {"hint": "${flag}", "cost": 100}
+    ]
+}

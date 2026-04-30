@@ -2,9 +2,7 @@ package no.bachelor26.Tasks;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,9 +14,7 @@ import no.bachelor26.Tasks.DTO.RawTaskComponents;
 import no.bachelor26.Tasks.DTO.TaskSeed;
 import no.bachelor26.Tasks.Exception.TaskNotFoundException;
 import no.bachelor26.Tasks.Hints.HintService;
-import no.bachelor26.Tasks.Hints.DTO.HintDTO;
 import no.bachelor26.Tasks.Hints.DTO.HintResult;
-import no.bachelor26.Tasks.TaskSessions.TaskSession;
 import no.bachelor26.Tasks.TaskSessions.TaskSessionService;
 import no.bachelor26.User.UserSessions.UserSession;
 import no.bachelor26.User.UserSessions.UserState;
@@ -42,8 +38,6 @@ public class TaskService {
     @Autowired TaskSessionService taskSessionService;
 
     static final String TASK_FILE_PATH = "/static/tasks/";
-
-    Map<UUID, TaskSession> activeSessions = new ConcurrentHashMap<>();
 
 
 
@@ -141,7 +135,10 @@ public class TaskService {
         }
 
         // WTF SKAL SKJE DERSOM DET ER EN DUPE SESJON
-        boolean startedSession = startTaskSession(userID, taskID, processedTaskComponents.getFlag(), processedTaskComponents.getHints());
+        boolean startedSession = taskSessionService.startTaskSession(
+            userID, taskID, processedTaskComponents.getFlag(), processedTaskComponents.getHints()
+        );
+
         if(!startedSession){
             sender.sendError(userID, reply, "dupe session");
             return;
@@ -155,6 +152,7 @@ public class TaskService {
         );
         sender.send(userID, reply);
 
+        System.out.println("NY TILSTAND: PARSE");
         userSession.setState(UserState.PARSE_STANDBY);
     }
 
@@ -171,8 +169,8 @@ public class TaskService {
         reply.setRequestID(msg.getRequestID());
         UUID userID = userSession.getUserID();
 
-        TaskSession taskSession = getUserTaskSession(userID);
-        if(taskSession == null){
+        boolean userInSession = taskSessionService.userInActiveSession(userID);
+        if(!userInSession){
             userSession.setState(UserState.IDLE);
             sender.sendError(userID, reply, "no session");
             return;
@@ -181,15 +179,18 @@ public class TaskService {
         reply.setStatus("success");
         switch(msg.getStatus()){
             case "success":
+                System.out.println("NY TILSTAND: ACTIVE_TASK");
                 userSession.setState(UserState.ACTIVE_TASK);
                 break;
 
             case "error":
+                System.out.println("NY TILSTAND: IDLE");
                 taskSessionService.cancelTaskSession(userID);
                 userSession.setState(UserState.IDLE);
                 break;
 
             default:
+                System.out.println("NY TILSTAND: IDLE");
                 userSession.setState(UserState.IDLE);
                 sender.sendError(userID, reply, "wtf");
                 return;
@@ -231,7 +232,7 @@ public class TaskService {
         reply.setRequestID(msg.getRequestID());
         UUID userID = userSession.getUserID();
 
-        if(!activeSessions.containsKey(userID)){
+        if(!taskSessionService.userInActiveSession(userID)){
             sender.sendError(userID, reply, "no session");
             return;
         }
@@ -320,43 +321,6 @@ public class TaskService {
      * @param userID ID-en til klienten som starter sesjonen
      * @param taskID ID-en til oppgaven sesjonen starter med
      */
-    public boolean startTaskSession(UUID userID, Long taskID, String flag, List<HintDTO> hints){
-        if(activeSessions.containsKey(userID)){
-            return false;
-        }
-
-        activeSessions.put(userID, new TaskSession(
-            userID, taskID, flag, hints
-        ));
-
-        return true;
-    }
-
-
-
-    /**
-     * Undersøker om en spiller er i en aktiv oppgavesesjon.
-     * 
-     * @param userID ID-en til klienten som undersøkes
-     * @return En boolean som svarer på spørsmålet, duh
-     * @author Kristoffer Folkvord
-     */
-    public boolean userInTaskSession(UUID userID){
-        return activeSessions.containsKey(userID);
-    }
-
-
-
-    /**
-     * Gir taskSession-objektet assisiert med en klient 
-     * 
-     * @param userID ID-en til klienten som undersøkes
-     * @return TaskSession-objektet, eller null om klienten ikke er i en aktiv sesjon
-     * @author Kristoffer Folkvord
-     */
-    public TaskSession getUserTaskSession(UUID userID){
-        return activeSessions.get(userID);
-    }
 
 
 

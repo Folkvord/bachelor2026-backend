@@ -1,0 +1,15 @@
+{
+    "id": 1,
+    "taskData": {
+        "extraDesc": "",
+        "data": {
+            "message": "If a bunny can talk, can a carrot also talk? Flag: ",
+            "flag": "${flag}"
+        }
+    },
+    "hints": [
+        {"hint": "Try the message solver tool", "cost": 20},
+        {"hint": "SHIFT Hint", "cost": 100},
+        {"hint": "DRAG TO COPY TEXT", "cost": 100}
+    ]
+}

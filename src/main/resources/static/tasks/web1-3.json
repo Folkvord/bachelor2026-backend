@@ -1,0 +1,15 @@
+{
+    "id": 3,
+    "taskData": {
+        "extraDesc": "https://bunny.com",
+        "data": {
+          "flagg": "${flag}",
+          "Password": "carrot"
+        }
+    },
+"hints": [
+        {"hint": "Find the password using passwordBreaker", "cost": 10},
+        {"hint": "Try logging in on Boogle, with the password", "cost": 25},
+        {"hint": "${flag}", "cost": 100}
+    ]
+}

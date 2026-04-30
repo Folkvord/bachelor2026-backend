@@ -26,13 +26,17 @@ public class TaskSessionService {
      * @param flag Det flagget oppgaven kommer til å akseptere
      * @param hints Listen over hintene brukeren kan få
      */
-    public void startTaskSession(
+    public boolean startTaskSession(
         UUID userID, Long taskID, 
         String flag, List<HintDTO> hints
     ){
         TaskSession session = new TaskSession(userID, taskID, flag, hints);
+        if(userInActiveSession(userID)){
+            return false;
+        }
+
         activeSessions.put(userID, session);
-        return;
+        return true;
     }
 
 

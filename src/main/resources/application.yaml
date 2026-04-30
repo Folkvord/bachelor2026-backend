@@ -13,10 +13,16 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
 
   thymeleaf:
     cache: false
+
+
+# Datainitialisering:
+data-initialization:
+  hard-reset-tasks: true  # Skal oppgavene hardresettes?
+
 
 # SOFIE: Setter port, kan endres
 server:

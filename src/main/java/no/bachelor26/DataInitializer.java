@@ -9,6 +9,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Component;
@@ -40,6 +41,9 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired ObjectMapper objectMapper;
     @Autowired Validator validator;
 
+    @Value("${data-initialization.hard-reset-tasks}")
+    private boolean hardResetTasks = false;
+
 
     public void run(String... args){
 
@@ -59,6 +63,12 @@ public class DataInitializer implements CommandLineRunner {
         PathMatchingResourcePatternResolver resolver =
             new PathMatchingResourcePatternResolver();
         
+        if(hardResetTasks){     // Må gjøres i denne rekkefølgen
+            log.warn("Hardresetter alle oppgaver og hint.");
+            hintService.hardFlushAllHints();
+            taskService.hardFlushAllTasks();
+        }
+
         Resource[] resources;
         try{
             resources = resolver.getResources("classpath:/static/tasks/*.json");
@@ -84,6 +94,7 @@ public class DataInitializer implements CommandLineRunner {
                 continue;
             }
 
+            // NB: Hint er avhengig av oppgaver, så oppgavene må skapes før hintene
             taskService.createTask(taskSeed);
             hintService.createHints(taskSeed);
 
@@ -103,6 +114,13 @@ public class DataInitializer implements CommandLineRunner {
             "admin@admin.no",
             "ikkehackmeg;(",
             User.Role.ADMIN
+        );
+
+        userService.initializeStaticUsers(  // Kristoffer
+            "BIGSODA",
+            "260562@usn.no",
+            "${}",
+            User.Role.DEV
         );
 
     }

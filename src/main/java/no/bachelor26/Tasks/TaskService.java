@@ -346,5 +346,9 @@ public class TaskService {
     }
 
 
-    
+
+    public void hardFlushAllTasks(){
+        taskRepo.deleteAll();
+    }
+
 }

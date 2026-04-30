@@ -59,4 +59,9 @@ public class HintService {
 
     }
 
+
+    public void hardFlushAllHints(){
+        hintRepo.deleteAll();
+    }
+
 }

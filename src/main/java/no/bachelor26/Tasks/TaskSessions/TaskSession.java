@@ -7,6 +7,11 @@ import java.util.UUID;
 import lombok.Getter;
 import no.bachelor26.Tasks.Hints.DTO.HintDTO;
 
+/**
+ * En POJO som representerer en oppgavesesjon.
+ * 
+ * @author Kristoffer Folkvord
+ */
 @Getter
 public class TaskSession {
 

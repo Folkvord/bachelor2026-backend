@@ -1,7 +1,7 @@
 {
-    "id": 9,
+    "id": 0,
     "taskData": {
-        "extraDesc": "get money",
+        "extraDesc": "dette er en test/debug oppgave. fuck bitches, get money. Flagget: ${flag}",
         "data": {
           "flagg": "${flag}"
         }

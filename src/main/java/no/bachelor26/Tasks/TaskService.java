@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import no.bachelor26.Tasks.DTO.ProcessedTaskComponents;
+import no.bachelor26.Tasks.DTO.TaskComponents;
 import no.bachelor26.Tasks.DTO.RawTaskComponents;
 import no.bachelor26.Tasks.DTO.TaskSeed;
 import no.bachelor26.Tasks.Exception.TaskNotFoundException;
@@ -25,6 +25,11 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.exc.JsonNodeException;
 
 
+/**
+ * Service-klassen som har ansvaret for oppgavene og oppgaveAPI-ene.
+ * 
+ * @author Kristoffer Folkvord
+ */
 @Service
 public class TaskService {
 
@@ -46,9 +51,8 @@ public class TaskService {
      * 
      * @param id ID-en til oppgaven som skal hentes
      * @return Det prosesserte innholdet til en oppgave og flagget
-     * @author Kristoffer Folkvord
      */
-    public ProcessedTaskComponents getAndProcessTaskComponents(Long id) throws TaskNotFoundException{
+    public TaskComponents getAndProcessTaskComponents(Long id) throws TaskNotFoundException{
         RawTaskComponents rawTaskComponents = taskRepo.findTaskContentById(id).orElseThrow(
             () -> new TaskNotFoundException(id.toString())
         );
@@ -57,16 +61,16 @@ public class TaskService {
         String flag = rawTaskComponents.getStaticFlag() == null ? 
             "BunOS{BUNNI}" : rawTaskComponents.getStaticFlag();
 
-        ProcessedTaskComponents result = new ProcessedTaskComponents();
+        TaskComponents result = new TaskComponents();
         result.setFlag(flag);
         result.setData(
-            taskProcesser.process(rawTaskComponents.getData(), flag)
+            rawTaskComponents.getData()
         );
         result.setHints(
             hintService.getTaskHints(id)
         );
 
-        return result;
+        return taskProcesser.process(result);
     }
 
 
@@ -105,7 +109,6 @@ public class TaskService {
      * 
      * @param userID ID-en på klienten som kaller API-et
      * @param data Innholdet til klientmeldingen
-     * @author Kristoffer Folkvord
      */
     public void respondToTask(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage("task");
@@ -126,9 +129,9 @@ public class TaskService {
 
 
         // Hent prosessert oppgave
-        ProcessedTaskComponents processedTaskComponents;
+        TaskComponents TaskComponents;
         try{
-            processedTaskComponents = getAndProcessTaskComponents(taskID);
+            TaskComponents = getAndProcessTaskComponents(taskID);
         } catch(TaskNotFoundException e){
             sender.sendError(userID, reply, "no access");
             return;
@@ -136,7 +139,7 @@ public class TaskService {
 
         // WTF SKAL SKJE DERSOM DET ER EN DUPE SESJON
         boolean startedSession = taskSessionService.startTaskSession(
-            userID, taskID, processedTaskComponents.getFlag(), processedTaskComponents.getHints()
+            userID, taskID, TaskComponents.getFlag(), TaskComponents.getHints()
         );
 
         if(!startedSession){
@@ -147,12 +150,11 @@ public class TaskService {
         reply.setStatus("success");
         reply.setData(
             objectMapper.valueToTree(
-                processedTaskComponents.getData()
+                TaskComponents.getData()
             )
         );
         sender.send(userID, reply);
 
-        System.out.println("NY TILSTAND: PARSE");
         userSession.setState(UserState.PARSE_STANDBY);
     }
 
@@ -179,18 +181,15 @@ public class TaskService {
         reply.setStatus("success");
         switch(msg.getStatus()){
             case "success":
-                System.out.println("NY TILSTAND: ACTIVE_TASK");
                 userSession.setState(UserState.ACTIVE_TASK);
                 break;
 
             case "error":
-                System.out.println("NY TILSTAND: IDLE");
                 taskSessionService.cancelTaskSession(userID);
                 userSession.setState(UserState.IDLE);
                 break;
 
             default:
-                System.out.println("NY TILSTAND: IDLE");
                 userSession.setState(UserState.IDLE);
                 sender.sendError(userID, reply, "wtf");
                 return;
@@ -271,7 +270,6 @@ public class TaskService {
      * 
      * @param userSession Spillerens tilstand
      * @param msg GameMessage
-     * @author Kristoffer Folkvord
      */
     public void respondToGetHint(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage("get-hint");
@@ -313,14 +311,6 @@ public class TaskService {
 
         sender.send(userID, reply);
     }
-
-    
-    /**
-     * Starter en ny oppgavesesjon hvis ikke en allerede eksisterer.
-     * 
-     * @param userID ID-en til klienten som starter sesjonen
-     * @param taskID ID-en til oppgaven sesjonen starter med
-     */
 
 
 

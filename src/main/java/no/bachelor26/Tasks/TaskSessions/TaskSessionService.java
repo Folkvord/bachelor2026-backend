@@ -11,6 +11,11 @@ import org.springframework.stereotype.Service;
 import no.bachelor26.Tasks.Hints.DTO.HintDTO;
 import no.bachelor26.Tasks.Hints.DTO.HintResult;
 
+/**
+ * Service-klassen som har ansvar for alle de aktive oppgavesesjonene.
+ * 
+ * @author Kristoffer Folkvord
+ */
 @Service
 public class TaskSessionService {
 

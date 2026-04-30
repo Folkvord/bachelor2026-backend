@@ -1,5 +1,6 @@
 {
     "id": 0,
+    "staticFlag": "BunOS{omg}",
     "taskData": {
         "extraDesc": "dette er en test/debug oppgave. fuck bitches, get money. Flagget: ${flag}",
         "data": {

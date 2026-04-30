@@ -2,6 +2,7 @@ package no.bachelor26.Tasks.DTO;
 
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -17,6 +18,9 @@ public class TaskSeed {
     
     @NotNull
     private Long id;
+
+    @Nullable
+    private String staticFlag;
 
     @Valid
     @NotNull

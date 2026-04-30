@@ -340,6 +340,7 @@ public class TaskService {
         Task task = new Task();
         task.setId(seed.getId());
         task.setTaskData(seed.getTaskData());
+        task.setStaticFlag(seed.getStaticFlag());
 
         taskRepo.save(task);
         log.info("OppgaveID (" + seed.getId() + ") opprettet.");

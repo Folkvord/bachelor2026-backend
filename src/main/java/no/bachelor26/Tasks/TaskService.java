@@ -1,6 +1,7 @@
 package no.bachelor26.Tasks;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -368,6 +369,32 @@ public class TaskService {
 
         taskRepo.save(task);
         log.info("OppgaveID (" + seed.getId() + ") opprettet.");
+    }
+
+
+
+    /**
+     * Redigerer en rad i oppgavetabellen dersom den finnes, eller skaper den dersom ikke
+     * 
+     * @param seed Oppgavefrøet
+     */
+    public void editOrCreateTask(TaskSeed seed){
+        Optional<Task> possibleTask = taskRepo.findById(seed.getId());
+        if(possibleTask.isEmpty()){
+            createTask(seed);
+            return;
+        }
+
+        Task task = possibleTask.get();
+        task.setTaskData(seed.getTaskData());
+        task.setStaticFlag(seed.getStaticFlag());
+        if(task.getUnlocksTaskID() == null){
+            log.warn("OppgaveID (" + seed.getId() + ") er satt til å ikke gi tilgang til en annen oppgave.");
+        }
+        task.setUnlocksTaskID(seed.getUnlocks());
+
+        taskRepo.save(task);
+        log.info("OppgaveID (" + seed.getId() + ") redigert.");
     }
 
 

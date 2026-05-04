@@ -19,6 +19,9 @@ public class Task {
     @Id
     private Long id;    // Vi skal ikke generere denne, den settes i oppgavefilene
 
+    @Column(nullable = true)    // Testoppgaver / den siste oppgaven
+    private Long unlocksTaskID;
+    
     @Column(nullable = true)        // For de oppgavene som har et statisk flagg
     private String staticFlag;      // Dersom oppgaven har et dynamisk flagg, er denne kollonen null
 

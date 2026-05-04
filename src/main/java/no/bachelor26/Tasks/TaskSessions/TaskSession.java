@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import lombok.Getter;
+import no.bachelor26.Tasks.DTO.TaskComponents;
 import no.bachelor26.Tasks.Hints.DTO.HintDTO;
 
 /**
@@ -21,18 +22,16 @@ public class TaskSession {
 
     private String flag;
     private List<HintDTO> hints;
+    private Long unlocksTaskID;
 
-
-    public TaskSession(
-        UUID userID,
-        Long taskID,
-        String flag,
-        List<HintDTO> hints
-    ){
+    public TaskSession(UUID userID, Long taskID, TaskComponents taskComponents){
         this.userID = userID;
         this.taskID = taskID;
-        this.flag = flag;
-        this.hints = hints;
+
+        this.flag = taskComponents.getFlag();
+        this.hints = taskComponents.getHints();
+        this.unlocksTaskID = taskComponents.getUnlocksTaskId();
+        
         taskStart = LocalTime.now();
     }
 

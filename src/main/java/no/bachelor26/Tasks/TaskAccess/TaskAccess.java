@@ -6,9 +6,6 @@ import lombok.Data;
 import java.time.Instant;
 import java.util.UUID;
 
-import no.bachelor26.Tasks.Task;
-import no.bachelor26.User.User;
-
 @Data
 @Entity
 @Table(name = "user_task_access")
@@ -16,7 +13,7 @@ public class TaskAccess {
 
     @EmbeddedId
     private TaskAccessId id;
-
+/* 
     // SOFIE: Kobler tilgang til en bruker /
     @ManyToOne(optional = false)
     @MapsId("userID")
@@ -28,10 +25,12 @@ public class TaskAccess {
     @MapsId("taskID")
     @JoinColumn(name = "taskID", nullable = false)
     private Task task;
-
+ */
     // SOFIE: Tidspunktet tasken ble låst opp /
     @Column(name = "unlockedAt", nullable = false, updatable = false)
     private Instant unlockedAt;
+
+    public TaskAccess(){}
 
     public TaskAccess(UUID userID, Long taskID){
         id = new TaskAccessId(userID, taskID);
@@ -41,4 +40,5 @@ public class TaskAccess {
     protected void onCreate() {
         unlockedAt = Instant.now();
     }
+    
 }

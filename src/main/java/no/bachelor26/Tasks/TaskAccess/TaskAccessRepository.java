@@ -9,12 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 public interface TaskAccessRepository extends JpaRepository<TaskAccess, TaskAccessId>{
     
     @Query("""
-        SELECT t.task.id 
+        SELECT t.id.taskID 
         FROM TaskAccess t
-        WHERE t.user.id = :userID
+        WHERE t.id.userID = :userID
     """)
     public List<Long> findAllAccessableTasks(UUID userID);
 
-    public boolean existsByIdUserIDAndTaskId(UUID userID, Long taskID);
+    public boolean existsByIdUserIDAndIdTaskID(UUID userID, Long taskID);
 
 }

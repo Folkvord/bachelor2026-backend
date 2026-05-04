@@ -20,6 +20,9 @@ public class TaskSeed {
     private Long id;
 
     @Nullable
+    private Long unlocks;
+
+    @Nullable
     private String staticFlag;
 
     @Valid

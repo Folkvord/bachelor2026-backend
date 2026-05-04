@@ -14,10 +14,12 @@ public class RawTaskComponents {
 
     private TaskData data;
     private String staticFlag;
+    private Long unlocksTaskID;
 
-    public RawTaskComponents(TaskData data, String staticFlag){
+    public RawTaskComponents(TaskData data, String staticFlag, Long unlocksTaskID){
         this.data = data;
         this.staticFlag = staticFlag;
+        this.unlocksTaskID = unlocksTaskID;
     }
 
 }

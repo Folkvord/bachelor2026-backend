@@ -12,7 +12,7 @@ public interface TaskRepository extends JpaRepository<Task, Long>{
 
     @Query("""
         SELECT new no.bachelor26.Tasks.DTO.RawTaskComponents(
-            t.taskData, t.staticFlag
+            t.taskData, t.staticFlag, t.unlocksTaskID
         )
         FROM Task t
         WHERE t.id = :id

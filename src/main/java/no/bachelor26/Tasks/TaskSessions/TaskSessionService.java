@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
 
+import no.bachelor26.Tasks.DTO.TaskComponents;
 import no.bachelor26.Tasks.Hints.DTO.HintDTO;
 import no.bachelor26.Tasks.Hints.DTO.HintResult;
 
@@ -33,13 +34,13 @@ public class TaskSessionService {
      */
     public boolean startTaskSession(
         UUID userID, Long taskID, 
-        String flag, List<HintDTO> hints
+        TaskComponents taskComponents
     ){
-        TaskSession session = new TaskSession(userID, taskID, flag, hints);
         if(userInActiveSession(userID)){
             return false;
         }
-
+        
+        TaskSession session = new TaskSession(userID, taskID, taskComponents);
         activeSessions.put(userID, session);
         return true;
     }
@@ -94,7 +95,27 @@ public class TaskSessionService {
 
     
     
-    public void cancelTaskSession(UUID userID){
+    /**
+     * Fullfører oppgaven 
+     * 
+     * @param userID BrukerID-en
+     * @return OppgaveID-en til oppgaven som låses opp; kan være {@code null}
+     */
+    public Long completeSession(UUID userID){
+        if(!userInActiveSession(userID)){
+            return null;
+        }
+
+        TaskSession session = getTaskSession(userID);
+        
+        // Logg som fullført oppgave
+
+        activeSessions.remove(userID);
+        return session.getUnlocksTaskID();
+    }
+
+
+    public void cancelSession(UUID userID){
         activeSessions.remove(userID);
     }
 

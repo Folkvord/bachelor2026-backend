@@ -70,6 +70,9 @@ public class TaskService {
         result.setHints(
             hintService.getTaskHints(id)
         );
+        result.setUnlocksTaskId(
+            rawTaskComponents.getUnlocksTaskID()
+        );
 
         return taskProcesser.process(result);
     }
@@ -122,14 +125,15 @@ public class TaskService {
 
         Long taskID = content.asLong();
         if(!taskAccessService.userHasAccess(userSession, taskID)){
+            System.out.println("INGEN TILGANG ;(");
             sender.sendError(userID, reply, "no access");
             return;
         }
 
         // Hent prosessert oppgave
-        TaskComponents TaskComponents;
+        TaskComponents taskComponents;
         try{
-            TaskComponents = getAndProcessTaskComponents(taskID);
+            taskComponents = getAndProcessTaskComponents(taskID);
         } catch(TaskNotFoundException e){
             sender.sendError(userID, reply, "no access");
             return;
@@ -137,7 +141,7 @@ public class TaskService {
 
         // WTF SKAL SKJE DERSOM DET ER EN DUPE SESJON
         boolean startedSession = taskSessionService.startTaskSession(
-            userID, taskID, TaskComponents.getFlag(), TaskComponents.getHints()
+            userID, taskID, taskComponents
         );
 
         if(!startedSession){
@@ -148,12 +152,12 @@ public class TaskService {
         reply.setStatus("success");
         reply.setData(
             objectMapper.valueToTree(
-                TaskComponents.getData()
+                taskComponents.getData()
             )
         );
         sender.send(userID, reply);
 
-        userSession.setState(UserState.PARSE_STANDBY);
+        userSession.changeState(UserState.PARSE_STANDBY);
     }
 
 
@@ -175,7 +179,7 @@ public class TaskService {
 
         boolean userInSession = taskSessionService.userInActiveSession(userID);
         if(!userInSession){
-            userSession.setState(UserState.IDLE);
+            userSession.changeState(UserState.IDLE);
             sender.sendError(userID, reply, "no session");
             return;
         }
@@ -183,16 +187,16 @@ public class TaskService {
         reply.setStatus("success");
         switch(msg.getStatus()){
             case "success":
-                userSession.setState(UserState.ACTIVE_TASK);
+                userSession.changeState(UserState.ACTIVE_TASK);
                 break;
 
             case "error":
-                taskSessionService.cancelTaskSession(userID);
-                userSession.setState(UserState.IDLE);
+                taskSessionService.cancelSession(userID);
+                userSession.changeState(UserState.IDLE);
                 break;
 
             default:
-                userSession.setState(UserState.IDLE);
+                userSession.changeState(UserState.IDLE);
                 sender.sendError(userID, reply, "wtf");
                 return;
         }
@@ -227,8 +231,8 @@ public class TaskService {
 
         }
 
-        taskSessionService.cancelTaskSession(userID);
-        userSession.setState(UserState.IDLE);
+        taskSessionService.cancelSession(userID);
+        userSession.changeState(UserState.IDLE);
     }
 
 
@@ -263,8 +267,13 @@ public class TaskService {
 
         String result = taskSessionService.validateFlag(userID, flag) ? "correct" : "wrong";
         if(result.equals("correct")){
-            taskSessionService.cancelTaskSession(userID);
-            userSession.setState(UserState.IDLE);
+
+            Long unlockedID = taskSessionService.completeSession(userID);
+            if(unlockedID != null){     // Det er mulig at en oppgave ikke låser opp en annen
+                taskAccessService.grantUserAccess(userID, unlockedID);
+            }
+
+            userSession.changeState(UserState.IDLE);
         }
 
         reply.setStatus("success");
@@ -331,7 +340,7 @@ public class TaskService {
      * @param userID BrukerID
      */
     public void cancelTaskSession(UUID userID){
-        taskSessionService.cancelTaskSession(userID);
+        taskSessionService.cancelSession(userID);
     }
 
 
@@ -349,6 +358,11 @@ public class TaskService {
         
         Task task = new Task();
         task.setId(seed.getId());
+        
+        if(seed.getUnlocks() == null){
+            log.warn("OppgaveID (" + seed.getId() + ") er satt til å ikke gi tilgang til en annen oppgave.");
+        }
+        task.setUnlocksTaskID(seed.getUnlocks());
         task.setTaskData(seed.getTaskData());
         task.setStaticFlag(seed.getStaticFlag());
 

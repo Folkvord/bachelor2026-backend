@@ -1,6 +1,7 @@
 package no.bachelor26.User;
 
 import no.bachelor26.Tasks.TaskService;
+import no.bachelor26.Tasks.TaskAccess.TaskAccessService;
 import no.bachelor26.User.Exception.EmailInUseException;
 import no.bachelor26.User.Exception.UsernameTakenException;
 
@@ -13,14 +14,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    @Autowired
-    UserRepository userRepo;
-
-    @Autowired
-    TaskService taskService;
-
-    @Autowired
-    PasswordEncoder encoder;
+    @Autowired UserRepository userRepo;
+    @Autowired TaskService taskService;
+    @Autowired TaskAccessService taskAccessService;
+    @Autowired PasswordEncoder encoder;
 
     
     
@@ -93,6 +90,9 @@ public class UserService {
         user.setPasswordHash(encoder.encode(password));
         user.setRole(role);
         userRepo.save(user);
+        
+        System.out.println(user.getId());
+        taskAccessService.grantNewUserAccess(user.getId());
     }
 
 }

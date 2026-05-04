@@ -15,11 +15,12 @@ public class TaskAccessService {
 
     @Autowired TaskAccessRepository taskAccessRepo;
     @Autowired TaskRepository taskRepo;
-    
+
+    private static final Long FIRST_TASK_ID = Long.valueOf(1);
 
 
     public boolean userHasAccess(UUID userID, Long taskID){
-        return taskAccessRepo.existsByIdUserIDAndTaskId(userID, taskID);
+        return taskAccessRepo.existsByIdUserIDAndIdTaskID(userID, taskID);
     }
 
 
@@ -28,7 +29,7 @@ public class TaskAccessService {
         if(userHasSpecialAccess(user.getRole())){
             return true;
         }
-        return taskAccessRepo.existsByIdUserIDAndTaskId(user.getUserID(), taskID);
+        return taskAccessRepo.existsByIdUserIDAndIdTaskID(user.getUserID(), taskID);
     }
 
 
@@ -55,7 +56,20 @@ public class TaskAccessService {
         TaskAccess accessToken = new TaskAccess(userID, taskID);
         taskAccessRepo.save(accessToken);
     }
+
     
+
+    public void grantNewUserAccess(UUID userID){
+        TaskAccess accessToken = new TaskAccess(userID, FIRST_TASK_ID);
+        taskAccessRepo.save(accessToken);
+    }
+
+
+
+    public void hardFlushAllProgress(){
+        taskAccessRepo.deleteAll();
+    }
+
 
 
     private boolean userHasSpecialAccess(User.Role role){

@@ -20,6 +20,7 @@ import no.bachelor26.Tasks.TaskService;
 import no.bachelor26.Tasks.DTO.TaskSeed;
 import no.bachelor26.Tasks.Exception.TaskFileException;
 import no.bachelor26.Tasks.Hints.HintService;
+import no.bachelor26.Tasks.TaskAccess.TaskAccessService;
 import no.bachelor26.User.UserService;
 import no.bachelor26.User.User;
 import tools.jackson.core.JacksonException;
@@ -38,6 +39,7 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired TaskService taskService;
     @Autowired HintService hintService;
     @Autowired UserService userService;
+    @Autowired TaskAccessService taskAccessService;
     @Autowired ObjectMapper objectMapper;
     @Autowired Validator validator;
 
@@ -64,8 +66,9 @@ public class DataInitializer implements CommandLineRunner {
             new PathMatchingResourcePatternResolver();
         
         if(hardResetTasks){     // Må gjøres i denne rekkefølgen
-            log.warn("Hardresetter alle oppgaver og hint.");
+            log.warn("Hardresetter alle oppgaver, hint og brukerfremskritt.");
             hintService.hardFlushAllHints();
+            taskAccessService.hardFlushAllProgress();
             taskService.hardFlushAllTasks();
         }
 
@@ -127,6 +130,27 @@ public class DataInitializer implements CommandLineRunner {
             "BIGSODA",
             "260562@usn.no",
             "${}",
+            User.Role.DEV
+        );
+
+        userService.initializeStaticUsers(  // Sandre >;O
+            "BIGSANDRE",
+            "260575@usn.no",
+            "hallo123",
+            User.Role.DEV
+        );
+
+        userService.initializeStaticUsers(  // Sofaen >:)))
+            "saintSofelin",
+            "247511@usn.no",
+            "slayPurrHoustenBootsDown!@hh",
+            User.Role.DEV
+        );
+
+        userService.initializeStaticUsers(  // Edwinstern c:<
+            "EDwinner",
+            "260571@usn.no",
+            "ilovebunnies",
             User.Role.DEV
         );
 

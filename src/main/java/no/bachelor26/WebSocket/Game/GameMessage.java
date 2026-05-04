@@ -10,8 +10,10 @@ public class GameMessage {
     private int requestID;
     private String status;
     private JsonNode data;
-    
 
+    public GameMessage(){}
+
+    
     
     /**
      * Default konstruktør

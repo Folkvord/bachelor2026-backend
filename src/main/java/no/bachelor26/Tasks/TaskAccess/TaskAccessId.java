@@ -16,6 +16,8 @@ public class TaskAccessId implements Serializable {
     @Column(name = "taskID")
     private Long taskID;
 
+    public TaskAccessId(){}
+
     public TaskAccessId(UUID userID, Long taskID){
         this.userID = userID;
         this.taskID = taskID;

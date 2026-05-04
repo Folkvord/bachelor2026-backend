@@ -18,5 +18,6 @@ public class TaskComponents {
     private TaskData data;
     private String flag;
     private List<HintDTO> hints;
+    private Long unlocksTaskId;
 
 }

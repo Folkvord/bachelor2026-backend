@@ -1,5 +1,6 @@
 package no.bachelor26.Tasks;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,6 +18,9 @@ public interface TaskRepository extends JpaRepository<Task, Long>{
         WHERE t.id = :id
     """)
     Optional<RawTaskComponents> findTaskContentById(Long id);
+
+    @Query("SELECT t.id FROM Task t")
+    List<Long> findAllIDs();
 
     boolean existsById(Long id);
 

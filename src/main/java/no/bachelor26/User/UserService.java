@@ -4,6 +4,8 @@ import no.bachelor26.Tasks.TaskService;
 import no.bachelor26.User.Exception.EmailInUseException;
 import no.bachelor26.User.Exception.UsernameTakenException;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,17 @@ public class UserService {
     PasswordEncoder encoder;
 
     
+    
+    public User getUserByID(UUID userID){
+        return userRepo.findById(userID).orElseThrow();
+    }
+
+    public User getUserByName(String name){
+        return userRepo.findByUsername(name).orElseThrow();
+    }
+
+
+
     // TODO: Pass på at brukernavn og passord er gyldig formatert
     /**
      * Lager en ny bruker og lagrer den i databasen.

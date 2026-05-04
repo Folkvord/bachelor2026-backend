@@ -1,6 +1,5 @@
 package no.bachelor26.Tasks;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,6 +14,7 @@ import no.bachelor26.Tasks.DTO.TaskSeed;
 import no.bachelor26.Tasks.Exception.TaskNotFoundException;
 import no.bachelor26.Tasks.Hints.HintService;
 import no.bachelor26.Tasks.Hints.DTO.HintResult;
+import no.bachelor26.Tasks.TaskAccess.TaskAccessService;
 import no.bachelor26.Tasks.TaskSessions.TaskSessionService;
 import no.bachelor26.User.UserSessions.UserSession;
 import no.bachelor26.User.UserSessions.UserState;
@@ -41,6 +41,7 @@ public class TaskService {
     @Autowired TaskProcesser taskProcesser;
     @Autowired HintService hintService;
     @Autowired TaskSessionService taskSessionService;
+    @Autowired TaskAccessService taskAccessService;
 
     static final String TASK_FILE_PATH = "/static/tasks/";
 
@@ -82,24 +83,17 @@ public class TaskService {
      * @param userID ID-en på klienten som kaller API-et
      */
     public void respondToTaskInfo(UserSession userSession, GameMessage msg){
-        GameMessage reply = new GameMessage("task-info");
-        reply.setRequestID(msg.getRequestID());
+        GameMessage reply = new GameMessage(msg);
         UUID userID = userSession.getUserID();
 
-        // Blabla hent tilgjengelige oppgaver (MIDLERTIDIG HARDKODET)
-        List<Long> tempAvaliableTasks = new ArrayList<>();
-        tempAvaliableTasks.add(Long.valueOf(0));
-        tempAvaliableTasks.add(Long.valueOf(1));
-        tempAvaliableTasks.add(Long.valueOf(2));
-
+        List<Long> availableTaskIDs = taskAccessService.getAvailableTasks(userSession);
         reply.setData(
             objectMapper.valueToTree(
-                tempAvaliableTasks
+                availableTaskIDs
             )
         );
 
         sender.send(userID, reply);
-
     }
 
 
@@ -111,9 +105,13 @@ public class TaskService {
      * @param data Innholdet til klientmeldingen
      */
     public void respondToTask(UserSession userSession, GameMessage msg){
-        GameMessage reply = new GameMessage("task");
-        reply.setRequestID(msg.getRequestID());
+        GameMessage reply = new GameMessage(msg);
         UUID userID = userSession.getUserID();
+
+        if(msg.getData() == null){
+            sender.sendError(userID, reply, "invalid content");
+            return;
+        }
 
         // Er innholdet en long?
         JsonNode content = msg.getData().get("taskID");
@@ -123,10 +121,10 @@ public class TaskService {
         }
 
         Long taskID = content.asLong();
-
-        
-        // Har brukeren tilgang til oppgaven?
-
+        if(!taskAccessService.userHasAccess(userSession, taskID)){
+            sender.sendError(userID, reply, "no access");
+            return;
+        }
 
         // Hent prosessert oppgave
         TaskComponents TaskComponents;
@@ -167,9 +165,13 @@ public class TaskService {
      * @param msg GameMessage
      */
     public void respondToParseStatus(UserSession userSession, GameMessage msg){
-        GameMessage reply = new GameMessage("parse-status");
-        reply.setRequestID(msg.getRequestID());
+        GameMessage reply = new GameMessage(msg);
         UUID userID = userSession.getUserID();
+
+        if(msg.getStatus() == null){
+            sender.sendError(userID, reply, "invalid content");
+            return;
+        }
 
         boolean userInSession = taskSessionService.userInActiveSession(userID);
         if(!userInSession){
@@ -209,9 +211,20 @@ public class TaskService {
     public void respondToCancelTask(UserSession userSession, GameMessage msg){
         UUID userID = userSession.getUserID();
         
-        if(msg.getStatus().equals("error")){
-            String reason = msg.getData().get("desc").asString();   // Tilgi meg Ian
-            log.error("UserID (" + userID + "): Avbrøt oppgavesesjonen sin på grunn av en feil: " + reason + ".");
+        if(msg.getStatus() == null){
+            log.error("bro");
+        }
+        else if(msg.getStatus().equals("error")){
+            
+            // Hvis en beskrivelse i datafeltet
+            if(msg.getData() != null && msg.getData().has("desc")){    // Tilgi meg for denne drittkoden
+                String reason = msg.getData().get("desc").asString();
+                log.error("UserID (" + userID + "): Avbrøt oppgavesesjonen sin på grunn av en feil: " + reason + ".");
+            }
+            else{
+                log.error("UserID (" + userID + "): Avbrøt oppgavesesjonen sin på grunn av en ukjent feil.");
+            }
+
         }
 
         taskSessionService.cancelTaskSession(userID);
@@ -227,8 +240,7 @@ public class TaskService {
      * @param msg GameMessage
      */
     public void respondToValidateFlag(UserSession userSession, GameMessage msg){
-        GameMessage reply = new GameMessage("validate-flag");
-        reply.setRequestID(msg.getRequestID());
+        GameMessage reply = new GameMessage(msg);
         UUID userID = userSession.getUserID();
 
         if(!taskSessionService.userInActiveSession(userID)){
@@ -272,8 +284,7 @@ public class TaskService {
      * @param msg GameMessage
      */
     public void respondToGetHint(UserSession userSession, GameMessage msg){
-        GameMessage reply = new GameMessage("get-hint");
-        reply.setRequestID(msg.getRequestID());
+        GameMessage reply = new GameMessage(msg);
         UUID userID = userSession.getUserID();
 
         if(msg.getData() == null){
@@ -331,7 +342,6 @@ public class TaskService {
      * @param seed Oppgavefrøet
      */
     public void createTask(TaskSeed seed){
-        
         if(taskRepo.existsById(seed.getId())){
             log.info("OppgaveID (" + seed.getId() + ") eksisterer. Hopper over.");
             return;

@@ -116,7 +116,14 @@ public class DataInitializer implements CommandLineRunner {
             User.Role.ADMIN
         );
 
-        userService.initializeStaticUsers(  // Kristoffer
+        userService.initializeStaticUsers(  // Testing- / debugbruker
+            "debug-bunni",
+            "bunni@usn.no",
+            "ikkehackmeg>:(",
+            User.Role.STUDENT
+        );
+
+        userService.initializeStaticUsers(  // Kristoffer >;)
             "BIGSODA",
             "260562@usn.no",
             "${}",

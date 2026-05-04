@@ -12,6 +12,8 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import no.bachelor26.Tasks.TaskService;
+import no.bachelor26.User.User;
+import no.bachelor26.User.UserService;
 import no.bachelor26.User.UserSessions.UserSession;
 import no.bachelor26.WebSocket.WebSocketSender;
 import tools.jackson.databind.ObjectMapper;
@@ -25,16 +27,20 @@ public class GameHandler extends TextWebSocketHandler {
     @Autowired MessageRouter messageRouter;
     @Autowired WebSocketSender sender;
     @Autowired TaskService taskService;
-    
+    @Autowired UserService userService;
 
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session){
         log.info("Klient tilkoblet");
-        UUID userID = UUID.fromString("332a4d65-2a84-423b-be83-53bc6d24f2e8");      // Alle er Kristoffer rn
-        UserSession userSession = new UserSession(userID);
+
+        // Samle all nødvendig brukerinformasjon for sesjonen
+        User user = userService.getUserByName("debug-bunni");       // FOR TESTING; ALLE ER DEBUG-BUNNI RN
+        UserSession userSession = new UserSession(user);
+        
+        // Legg til websocketsesjonen
         session.getAttributes().put("userSession", userSession);
-        sender.appendSession(userID, session);
+        sender.appendSession(user.getId(), session);
     }
 
 

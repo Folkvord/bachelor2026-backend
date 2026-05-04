@@ -62,6 +62,8 @@ public class TaskAccessService {
     public void grantNewUserAccess(UUID userID){
         TaskAccess accessToken = new TaskAccess(userID, FIRST_TASK_ID);
         taskAccessRepo.save(accessToken);
+        accessToken = new TaskAccess(userID, Long.valueOf(0));
+        taskAccessRepo.save(accessToken);
     }
 
 

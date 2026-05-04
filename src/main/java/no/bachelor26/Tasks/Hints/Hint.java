@@ -4,27 +4,20 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.Instant;
-import no.bachelor26.Tasks.Task;
 
 @Data
 @Entity
-@Table(name = "hints",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"taskID", "hintIndex"}))
+@Table(name = "hints")
 public class Hint {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long hintId;
+    @EmbeddedId
+    private HintId id;
 
     /* SOFIE: Setter slik at ikke et level har flere av hint 1, 2 og 3 */ 
-    @ManyToOne(optional = false)
+/*     @ManyToOne(optional = false)
     @JoinColumn(name = "taskID", nullable = false)
     private Task task;
-
-    /* SOFIE: Setter hintindex, melding, og kostnaden */
-    @Column(name = "hintIndex", nullable = false)
-    private Short hintIndex;
-
+ */
     @Column(name = "hintMessage", nullable = false)
     private String hintMessage;
 
@@ -36,6 +29,16 @@ public class Hint {
 
     @Column(name = "updatedAt")
     private Instant updatedAt;
+
+    public Hint(Long taskID, Short index){
+        id = new HintId(taskID, index);
+    }
+
+    public Hint(HintId id){
+        this.id = id;
+    }
+    
+    public Hint(){}
 
     @PrePersist
     protected void onCreate() {

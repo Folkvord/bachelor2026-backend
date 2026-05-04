@@ -21,7 +21,7 @@ spring:
 
 # Datainitialisering:
 data-initialization:
-  hard-reset-tasks: true  # Skal oppgavene hardresettes?
+  edit-existing-tasks: false  # Skal oppgavene redigeres ved oppstart?
 
 
 # SOFIE: Setter port, kan endres

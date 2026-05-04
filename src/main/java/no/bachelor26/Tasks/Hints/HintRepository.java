@@ -7,18 +7,18 @@ import org.springframework.data.jpa.repository.Query;
 
 import no.bachelor26.Tasks.Hints.DTO.HintDTO;
 
-public interface HintRepository extends JpaRepository<Hint, Long> {
+public interface HintRepository extends JpaRepository<Hint, HintId> {
     
     @Query("""
         SELECT new no.bachelor26.Tasks.Hints.DTO.HintDTO(
-            h.hintMessage, h.hintIndex, h.cost
+            h.hintMessage, h.id.index, h.cost
         )
         FROM Hint h
-        WHERE h.task.id = :taskId
-        ORDER BY h.hintIndex ASC
+        WHERE h.id.taskID = :taskId
+        ORDER BY h.id.index ASC
     """)
     List<HintDTO> findHintsByTaskId(Long taskId);
 
-    boolean existsByTaskIdAndHintIndex(Long taskId, Short hintIndex);
+    boolean existsByIdTaskIDAndIdIndex(Long taskId, Short hintIndex);
 
 }

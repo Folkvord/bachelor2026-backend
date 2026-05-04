@@ -378,14 +378,24 @@ public class TaskService {
      * 
      * @param seed Oppgavefrøet
      */
-    public void editOrCreateTask(TaskSeed seed){
+    public void editOrCreateTask(TaskSeed seed, boolean skipIfPresent){
         Optional<Task> possibleTask = taskRepo.findById(seed.getId());
-        if(possibleTask.isEmpty()){
-            createTask(seed);
+        
+        Task task;
+        String actionTaken = "none";
+        if(possibleTask.isPresent() && skipIfPresent){
+            log.info("OppgaveID (" + seed.getId() + ") eksisterer. Hopper over.");
             return;
         }
+        else if(possibleTask.isPresent()){
+            task = possibleTask.get();
+            actionTaken = "redigert.";
+        }
+        else{
+            task = new Task(seed.getId());
+            actionTaken = "opprettet.";
+        }
 
-        Task task = possibleTask.get();
         task.setTaskData(seed.getTaskData());
         task.setStaticFlag(seed.getStaticFlag());
         if(task.getUnlocksTaskID() == null){
@@ -394,7 +404,7 @@ public class TaskService {
         task.setUnlocksTaskID(seed.getUnlocks());
 
         taskRepo.save(task);
-        log.info("OppgaveID (" + seed.getId() + ") redigert.");
+        log.info("OppgaveID (" + seed.getId() + ") " + actionTaken);
     }
 
 

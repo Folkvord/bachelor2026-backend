@@ -43,8 +43,11 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired ObjectMapper objectMapper;
     @Autowired Validator validator;
 
-    @Value("${data-initialization.hard-reset-tasks}")
-    private boolean hardResetTasks = false;
+    // For nå har denne variablen en helt banalt navn
+    // i forholdt til hva det blir brukt for, men klokken
+    // er 00:42 på en tirsdag
+    @Value("${data-initialization.edit-existing-tasks}")
+    private boolean editExistingRows = true;
 
 
     public void run(String... args){
@@ -65,13 +68,6 @@ public class DataInitializer implements CommandLineRunner {
         PathMatchingResourcePatternResolver resolver =
             new PathMatchingResourcePatternResolver();
         
-        if(hardResetTasks){     // Må gjøres i denne rekkefølgen
-            log.warn("Hardresetter alle oppgaver, hint og brukerfremskritt.");
-            hintService.hardFlushAllHints();
-            taskAccessService.hardFlushAllProgress();
-            taskService.hardFlushAllTasks();
-        }
-
         Resource[] resources;
         try{
             resources = resolver.getResources("classpath:/static/tasks/*.json");
@@ -97,9 +93,11 @@ public class DataInitializer implements CommandLineRunner {
                 continue;
             }
 
-            // NB: Hint er avhengig av oppgaver, så oppgavene må skapes før hintene
-            taskService.createTask(taskSeed);
-            hintService.createHints(taskSeed);
+            // NB:  Hint er avhengig av oppgaver, så oppgavene må skapes før hintene
+            //      Vet ikke om dette har noe å si når vi redigerer dem, men jeg 
+            //      gidder IKKE å tenkte på det.
+            taskService.editOrCreateTask(taskSeed, !editExistingRows);
+            hintService.editOrCreateHints(taskSeed, !editExistingRows);
 
         }
 

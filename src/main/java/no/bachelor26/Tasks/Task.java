@@ -29,4 +29,10 @@ public class Task {
     @JdbcTypeCode(SqlTypes.JSON)
     private TaskData taskData;
 
+    public Task(Long taskID){
+        this.id = taskID;
+    }
+
+    public Task(){}
+
 }

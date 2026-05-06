@@ -127,7 +127,7 @@ public class DataInitializer implements CommandLineRunner {
         userService.initializeStaticUsers(  // Kristoffer >;)
             "BIGSODA",
             "260562@usn.no",
-            "${}",
+            "${env-var-ass}",
             User.Role.DEV
         );
 
@@ -138,7 +138,7 @@ public class DataInitializer implements CommandLineRunner {
             User.Role.DEV
         );
 
-        userService.initializeStaticUsers(  // Sofaen >:)))
+        userService.initializeStaticUsers(  // Sofaen >:P
             "saintSofelin",
             "247511@usn.no",
             "slayPurrHoustenBootsDown!@hh",

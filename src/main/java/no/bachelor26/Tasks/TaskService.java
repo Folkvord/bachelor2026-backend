@@ -194,6 +194,7 @@ public class TaskService {
             case "error":
                 taskSessionService.cancelSession(userID);
                 userSession.changeState(UserState.IDLE);
+                log.error("feil med oppgave: ");        // Hent beskrivelse her pls
                 break;
 
             default:

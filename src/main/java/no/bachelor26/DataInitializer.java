@@ -121,7 +121,7 @@ public class DataInitializer implements CommandLineRunner {
             "debug-bunni",
             "bunni@usn.no",
             "ikkehackmeg>:(",
-            User.Role.STUDENT
+            User.Role.DEV
         );
 
         userService.initializeStaticUsers(  // Kristoffer >;)

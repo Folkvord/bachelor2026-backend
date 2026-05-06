@@ -17,10 +17,10 @@ import no.bachelor26.Tasks.JSON.TaskData;
 public class Task {
     
     @Id
-    private Long id;    // Vi skal ikke generere denne, den settes i oppgavefilene
+    private Integer id;    // Vi skal ikke generere denne, den settes i oppgavefilene
 
     @Column(nullable = true)    // Testoppgaver / den siste oppgaven
-    private Long unlocksTaskID;
+    private Integer unlocksTaskID;
     
     @Column(nullable = true)        // For de oppgavene som har et statisk flagg
     private String staticFlag;      // Dersom oppgaven har et dynamisk flagg, er denne kollonen null
@@ -29,7 +29,7 @@ public class Task {
     @JdbcTypeCode(SqlTypes.JSON)
     private TaskData taskData;
 
-    public Task(Long taskID){
+    public Task(Integer taskID){
         this.id = taskID;
     }
 

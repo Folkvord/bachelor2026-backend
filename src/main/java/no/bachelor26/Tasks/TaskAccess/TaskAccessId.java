@@ -14,11 +14,11 @@ public class TaskAccessId implements Serializable {
     private UUID userID;
 
     @Column(name = "taskID")
-    private Long taskID;
+    private Integer taskID;
 
     public TaskAccessId(){}
 
-    public TaskAccessId(UUID userID, Long taskID){
+    public TaskAccessId(UUID userID, Integer taskID){
         this.userID = userID;
         this.taskID = taskID;
     }

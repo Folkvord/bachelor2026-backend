@@ -33,7 +33,7 @@ public class TaskSessionService {
      * @param hints Listen over hintene brukeren kan få
      */
     public boolean startTaskSession(
-        UUID userID, Long taskID, 
+        UUID userID, Integer taskID, 
         TaskComponents taskComponents
     ){
         if(userInActiveSession(userID)){
@@ -101,7 +101,7 @@ public class TaskSessionService {
      * @param userID BrukerID-en
      * @return OppgaveID-en til oppgaven som låses opp; kan være {@code null}
      */
-    public Long completeSession(UUID userID){
+    public Integer completeSession(UUID userID){
         if(!userInActiveSession(userID)){
             return null;
         }

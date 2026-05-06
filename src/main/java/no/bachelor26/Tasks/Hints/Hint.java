@@ -30,7 +30,7 @@ public class Hint {
     @Column(name = "updatedAt")
     private Instant updatedAt;
 
-    public Hint(Long taskID, Short index){
+    public Hint(Integer taskID, Short index){
         id = new HintId(taskID, index);
     }
 

@@ -14,9 +14,9 @@ public class RawTaskComponents {
 
     private TaskData data;
     private String staticFlag;
-    private Long unlocksTaskID;
+    private Integer unlocksTaskID;
 
-    public RawTaskComponents(TaskData data, String staticFlag, Long unlocksTaskID){
+    public RawTaskComponents(TaskData data, String staticFlag, Integer unlocksTaskID){
         this.data = data;
         this.staticFlag = staticFlag;
         this.unlocksTaskID = unlocksTaskID;

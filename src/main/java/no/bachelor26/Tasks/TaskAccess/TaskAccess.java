@@ -32,7 +32,7 @@ public class TaskAccess {
 
     public TaskAccess(){}
 
-    public TaskAccess(UUID userID, Long taskID){
+    public TaskAccess(UUID userID, Integer taskID){
         id = new TaskAccessId(userID, taskID);
     }
 

@@ -9,12 +9,12 @@ import lombok.Data;
 public class HintId implements Serializable {
     
     @Column(nullable = false)
-    private Long taskID;
+    private Integer taskID;
     
     @Column(nullable = false)
     private Short index;
 
-    public HintId(Long taskID, Short index){
+    public HintId(Integer taskID, Short index){
         this.taskID = taskID;
         this.index = index;
     }

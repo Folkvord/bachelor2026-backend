@@ -16,16 +16,16 @@ public class TaskAccessService {
     @Autowired TaskAccessRepository taskAccessRepo;
     @Autowired TaskRepository taskRepo;
 
-    private static final Long FIRST_TASK_ID = Long.valueOf(1);
+    private static final Integer FIRST_TASK_ID = Integer.valueOf(1);
 
 
-    public boolean userHasAccess(UUID userID, Long taskID){
+    public boolean userHasAccess(UUID userID, Integer taskID){
         return taskAccessRepo.existsByIdUserIDAndIdTaskID(userID, taskID);
     }
 
 
     
-    public boolean userHasAccess(UserSession user, Long taskID){
+    public boolean userHasAccess(UserSession user, Integer taskID){
         if(userHasSpecialAccess(user.getRole())){
             return true;
         }
@@ -34,7 +34,7 @@ public class TaskAccessService {
 
 
     
-    public List<Long> getAvailableTasks(UserSession user){
+    public List<Integer> getAvailableTasks(UserSession user){
         if(userHasSpecialAccess(user.getRole())){
             return taskRepo.findAllIDs();
         }
@@ -48,7 +48,7 @@ public class TaskAccessService {
      * @param userID
      * @param taskID
      */
-    public void grantUserAccess(UUID userID, Long taskID){
+    public void grantUserAccess(UUID userID, Integer taskID){
         if(userHasAccess(userID, taskID)){
             return;
         }
@@ -62,7 +62,7 @@ public class TaskAccessService {
     public void grantNewUserAccess(UUID userID){
         TaskAccess accessToken = new TaskAccess(userID, FIRST_TASK_ID);
         taskAccessRepo.save(accessToken);
-        accessToken = new TaskAccess(userID, Long.valueOf(0));
+        accessToken = new TaskAccess(userID, Integer.valueOf(0));
         taskAccessRepo.save(accessToken);
     }
 

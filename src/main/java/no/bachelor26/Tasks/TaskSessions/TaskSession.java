@@ -17,14 +17,14 @@ import no.bachelor26.Tasks.Hints.DTO.HintDTO;
 public class TaskSession {
 
     private UUID userID;
-    private Long taskID;
+    private Integer taskID;
     private LocalTime taskStart;
 
     private String flag;
     private List<HintDTO> hints;
-    private Long unlocksTaskID;
+    private Integer unlocksTaskID;
 
-    public TaskSession(UUID userID, Long taskID, TaskComponents taskComponents){
+    public TaskSession(UUID userID, Integer taskID, TaskComponents taskComponents){
         this.userID = userID;
         this.taskID = taskID;
 

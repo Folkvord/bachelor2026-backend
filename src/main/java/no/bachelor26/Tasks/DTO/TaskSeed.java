@@ -17,10 +17,10 @@ import no.bachelor26.Tasks.JSON.TaskData;
 public class TaskSeed {
     
     @NotNull
-    private Long id;
+    private Integer id;
 
     @Nullable
-    private Long unlocks;
+    private Integer unlocks;
 
     @Nullable
     private String staticFlag;

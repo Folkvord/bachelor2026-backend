@@ -2,7 +2,6 @@ package no.bachelor26.User;
 
 import jakarta.persistence.*;
 import java.time.Instant;
-import java.util.UUID;
 import lombok.Data;
 
 // SOFIE: markerer User klassen som en JPA entitet
@@ -14,9 +13,8 @@ import lombok.Data;
 public class User {
     // SOFIE: Designerer id som primærnøkkel
     @Id
-    @GeneratedValue
-    @Column(columnDefinition = "uuid")
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     // SOFIE: brukernavn kan ikke være tom, må være unik, makslengde 25 tegn
     @Column(nullable=false,unique=true, length = 25)
@@ -39,6 +37,9 @@ public class User {
     @Column(nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
+    @Column(nullable = false)
+    private Instant updatedAt = Instant.now();
+
     public enum Role {
         STUDENT,
         ADMIN,
@@ -46,5 +47,19 @@ public class User {
     }
     
 
+
+    @PrePersist
+    protected void onCreate() {
+    Instant now = Instant.now();
+
+    createdAt = now;
+    updatedAt = now;
+
+}
+    @PreUpdate
+    protected void onUpdate() {
+    updatedAt = Instant.now();
+
+}
 
 }

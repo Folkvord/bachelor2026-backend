@@ -6,7 +6,7 @@ public class TaskNotFoundException extends RuntimeException {
         super("Oppgaven med navn: '" + taskName + "', finnes ikke.");
     }
 
-    public TaskNotFoundException(Long taskID){
+    public TaskNotFoundException(Integer taskID){
         super("Oppgaven med ID: '" + taskID + "', finnes ikke.");
     }
     

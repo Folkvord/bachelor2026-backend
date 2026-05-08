@@ -3,7 +3,7 @@ package no.bachelor26.Tasks.TaskSessions;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
+// import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import no.bachelor26.Tasks.Hints.DTO.HintResult;
 @Service
 public class TaskSessionService {
 
-    private Map<UUID, TaskSession> activeSessions = 
+    private Map<Integer, TaskSession> activeSessions = 
         new ConcurrentHashMap<>();
 
 
@@ -33,7 +33,7 @@ public class TaskSessionService {
      * @param hints Listen over hintene brukeren kan få
      */
     public boolean startTaskSession(
-        UUID userID, Long taskID, 
+        Integer userID, Integer taskID, 
         TaskComponents taskComponents
     ){
         if(userInActiveSession(userID)){
@@ -48,7 +48,7 @@ public class TaskSessionService {
 
 
     // MIDLERTIDIG FLAGGVALIDERING //
-    public boolean validateFlag(UUID userID, String guessedFlag){
+    public boolean validateFlag(Integer userID, String guessedFlag){
         String sessionFlag = getTaskSession(userID).getFlag();
         return guessedFlag.equals(sessionFlag);
     }
@@ -62,7 +62,7 @@ public class TaskSessionService {
      * @param index Indeksen på hintet
      * @return {@code HintResult} med en statusmelding og et hint om alt ok
      */
-    public HintResult retrieveHint(UUID userID, int hintIndex){
+    public HintResult retrieveHint(Integer userID, int hintIndex){
         List<HintDTO> hints = getTaskSession(userID).getHints();
         Optional<HintDTO> possibleHint = hints.stream()
             .filter(h -> h.getIndex() == hintIndex-1)   // -1 mens indeksen bestemmes
@@ -101,7 +101,7 @@ public class TaskSessionService {
      * @param userID BrukerID-en
      * @return OppgaveID-en til oppgaven som låses opp; kan være {@code null}
      */
-    public Long completeSession(UUID userID){
+    public Integer completeSession(Integer userID){
         if(!userInActiveSession(userID)){
             return null;
         }
@@ -115,15 +115,15 @@ public class TaskSessionService {
     }
 
 
-    public void cancelSession(UUID userID){
+    public void cancelSession(Integer userID){
         activeSessions.remove(userID);
     }
 
-    public boolean userInActiveSession(UUID userID){
+    public boolean userInActiveSession(Integer userID){
         return activeSessions.containsKey(userID);
     }
 
-    private TaskSession getTaskSession(UUID userID){
+    private TaskSession getTaskSession(Integer userID){
         return activeSessions.get(userID);
     }
     

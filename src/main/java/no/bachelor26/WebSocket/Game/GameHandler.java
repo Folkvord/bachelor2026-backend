@@ -49,7 +49,7 @@ public class GameHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status){
         log.info("Klient koblet fra");
         
-        UUID userID = ((UserSession) session.getAttributes()
+        Integer userID = ((UserSession) session.getAttributes()
             .get("userSession")).getUserID();
 
         sender.removeSession(userID);

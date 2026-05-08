@@ -4,21 +4,21 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.UUID;
+// import java.util.UUID;
 
 @Data
 @Embeddable
 public class TaskAccessId implements Serializable {
 
     @Column(name = "userID", columnDefinition = "uuid")
-    private UUID userID;
+    private Integer userID;
 
     @Column(name = "taskID")
-    private Long taskID;
+    private Integer taskID;
 
     public TaskAccessId(){}
 
-    public TaskAccessId(UUID userID, Long taskID){
+    public TaskAccessId(Integer userID, Integer taskID){
         this.userID = userID;
         this.taskID = taskID;
     }

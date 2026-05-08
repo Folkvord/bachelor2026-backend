@@ -22,7 +22,7 @@ public class HintService {
 
     @PersistenceContext EntityManager entityManager;
 
-    public List<HintDTO> getTaskHints(Long taskID){
+    public List<HintDTO> getTaskHints(Integer taskID){
         return hintRepo.findHintsByTaskId(taskID);
     }
 

@@ -1,6 +1,6 @@
 package no.bachelor26.User.DTO;
 
-import java.util.UUID;
+// import java.util.UUID;
 
 import lombok.Data;
 import no.bachelor26.User.User;
@@ -8,7 +8,7 @@ import no.bachelor26.User.User;
 @Data
 public class UserDTO {
     
-    private UUID id;
+    private Integer id;
     private String username;
     private User.Role role;
 

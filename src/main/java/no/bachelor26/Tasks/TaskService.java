@@ -2,7 +2,7 @@ package no.bachelor26.Tasks;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+// import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +88,7 @@ public class TaskService {
      */
     public void respondToTaskInfo(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage(msg);
-        UUID userID = userSession.getUserID();
+        Integer userID = userSession.getUserID();
 
         List<Long> availableTaskIDs = taskAccessService.getAvailableTasks(userSession);
         reply.setData(
@@ -110,7 +110,7 @@ public class TaskService {
      */
     public void respondToTask(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage(msg);
-        UUID userID = userSession.getUserID();
+        Integer userID = userSession.getUserID();
 
         if(msg.getData() == null){
             sender.sendError(userID, reply, "invalid content");
@@ -124,7 +124,7 @@ public class TaskService {
             return;
         }
 
-        Long taskID = content.asLong();
+        Integer taskID = content.asLong();
         if(!taskAccessService.userHasAccess(userSession, taskID)){
             System.out.println("INGEN TILGANG ;(");
             sender.sendError(userID, reply, "no access");
@@ -171,7 +171,7 @@ public class TaskService {
      */
     public void respondToParseStatus(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage(msg);
-        UUID userID = userSession.getUserID();
+        Integer userID = userSession.getUserID();
 
         if(msg.getStatus() == null){
             sender.sendError(userID, reply, "invalid content");
@@ -215,7 +215,7 @@ public class TaskService {
      * @param msg GameMessage
      */
     public void respondToCancelTask(UserSession userSession, GameMessage msg){
-        UUID userID = userSession.getUserID();
+        Integer userID = userSession.getUserID();
         
         if(msg.getStatus() == null){
             log.error("bro");
@@ -247,7 +247,7 @@ public class TaskService {
      */
     public void respondToValidateFlag(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage(msg);
-        UUID userID = userSession.getUserID();
+        Integer userID = userSession.getUserID();
 
         if(!taskSessionService.userInActiveSession(userID)){
             sender.sendError(userID, reply, "no session");
@@ -296,7 +296,7 @@ public class TaskService {
      */
     public void respondToGetHint(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage(msg);
-        UUID userID = userSession.getUserID();
+        Integer userID = userSession.getUserID();
 
         if(msg.getData() == null){
             sender.sendError(userID, reply, "no data");
@@ -341,7 +341,7 @@ public class TaskService {
      * 
      * @param userID BrukerID
      */
-    public void cancelTaskSession(UUID userID){
+    public void cancelTaskSession(Integer userID){
         taskSessionService.cancelSession(userID);
     }
 

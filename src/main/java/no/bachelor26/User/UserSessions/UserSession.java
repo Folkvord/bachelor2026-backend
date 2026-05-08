@@ -1,7 +1,5 @@
 package no.bachelor26.User.UserSessions;
 
-import java.util.UUID;
-
 import lombok.Data;
 import no.bachelor26.User.User;
 
@@ -11,7 +9,7 @@ public class UserSession {
     private UserState state = UserState.IDLE;
     private String username;
     private User.Role role;
-    private UUID userID;
+    private Integer userID;
 
     public UserSession(User user){
         userID = user.getId();

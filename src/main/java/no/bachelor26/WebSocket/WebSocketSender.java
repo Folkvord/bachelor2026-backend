@@ -25,7 +25,7 @@ public class WebSocketSender {
 
     @Autowired ObjectMapper objectMapper;
 
-    private Map<UUID, WebSocketSession> activeSessions = new ConcurrentHashMap<>();
+    private Map<Integer, WebSocketSession> activeSessions = new ConcurrentHashMap<>();
 
 
     
@@ -35,7 +35,7 @@ public class WebSocketSender {
      * @param userID ID-en på brukeren som eier sesjonen
      * @param session WebSocketSession-objektet handleren ga
      */
-    public void appendSession(UUID userID, WebSocketSession session){
+    public void appendSession(Integer userID, WebSocketSession session){
         if(activeSessions.containsKey(userID)){
             throw new DupeUserSessionException();
         }
@@ -49,7 +49,7 @@ public class WebSocketSender {
      * 
      * @param userID ID-en på brukeren som eier sesjonen
      */
-    public void removeSession(UUID userID){
+    public void removeSession(Integer userID){
         activeSessions.remove(userID);
     }
 
@@ -62,7 +62,7 @@ public class WebSocketSender {
      * @param msg GameMessage-meldingen som sendes
      * @author Kristoffer Folkvord
      */
-    public void send(UUID userID, GameMessage msg){
+    public void send(Integer userID, GameMessage msg){
         
         WebSocketSession session;
         try{
@@ -97,7 +97,7 @@ public class WebSocketSender {
      * @param errDesc En beskrivelse av feilen
      * @author Kristoffer Folkvord
      */
-    public void sendError(UUID userID, GameMessage errMsg, String errDesc){
+    public void sendError(Integer userID, GameMessage errMsg, String errDesc){
         errMsg.setStatus("error");
         errMsg.setData(
             objectMapper.readTree("{\"desc\":\"" + errDesc + "\"}")
@@ -116,7 +116,7 @@ public class WebSocketSender {
      * @throws UnexpectedSessionShutdownException Dersom WS-sesjonen har lukker
      * @return Sesjonsobjektet
      */
-    private WebSocketSession getSession(UUID userID) 
+    private WebSocketSession getSession(Integer userID) 
         throws NoUserSessionException, UnexpectedSessionShutdownException{
         if(!activeSessions.containsKey(userID)){
             throw new NoUserSessionException();
@@ -137,7 +137,7 @@ public class WebSocketSender {
      * 
      * @param userID BrukerID-en
      */
-    private void handleDisconnect(UUID userID){
+    private void handleDisconnect(Integer userID){
         try{
             activeSessions.get(userID).close();;
         } catch(IOException ignore){

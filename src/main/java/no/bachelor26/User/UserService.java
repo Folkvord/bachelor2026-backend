@@ -5,7 +5,7 @@ import no.bachelor26.Tasks.TaskAccess.TaskAccessService;
 import no.bachelor26.User.Exception.EmailInUseException;
 import no.bachelor26.User.Exception.UsernameTakenException;
 
-import java.util.UUID;
+// import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,7 +21,7 @@ public class UserService {
 
     
     
-    public User getUserByID(UUID userID){
+    public User getUserByID(Integer userID){
         return userRepo.findById(userID).orElseThrow();
     }
 

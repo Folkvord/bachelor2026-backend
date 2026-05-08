@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.Instant;
-import java.util.UUID;
+// import java.util.UUID;
 
 @Data
 @Entity
@@ -32,7 +32,7 @@ public class TaskAccess {
 
     public TaskAccess(){}
 
-    public TaskAccess(UUID userID, Long taskID){
+    public TaskAccess(Integer userID, Integer taskID){
         id = new TaskAccessId(userID, taskID);
     }
 

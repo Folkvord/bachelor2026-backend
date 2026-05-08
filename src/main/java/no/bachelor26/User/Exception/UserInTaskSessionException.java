@@ -1,10 +1,9 @@
 package no.bachelor26.User.Exception;
 
-import java.util.UUID;
 
 public class UserInTaskSessionException extends RuntimeException {
     
-    public UserInTaskSessionException(UUID userID, Long taskID){
+    public UserInTaskSessionException(Integer userID, Integer taskID){
         super("Brukeren med ID-en: " + userID.toString() + ", er allerede i en aktiv oppgave: " + taskID + ".");
     }
 

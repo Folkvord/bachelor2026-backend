@@ -17,8 +17,8 @@ public interface HintRepository extends JpaRepository<Hint, HintId> {
         WHERE h.id.taskID = :taskId
         ORDER BY h.id.index ASC
     """)
-    List<HintDTO> findHintsByTaskId(Long taskId);
+    List<HintDTO> findHintsByTaskId(Integer taskID);
 
-    boolean existsByIdTaskIDAndIdIndex(Long taskId, Short hintIndex);
+    boolean existsByIdTaskIDAndIdIndex(Integer taskID, Short hintIndex);
 
 }

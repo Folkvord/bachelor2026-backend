@@ -1,7 +1,5 @@
 package no.bachelor26.User.DTO;
 
-// import java.util.UUID;
-
 import lombok.Data;
 import no.bachelor26.User.User;
 

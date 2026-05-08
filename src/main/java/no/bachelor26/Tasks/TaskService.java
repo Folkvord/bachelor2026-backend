@@ -2,7 +2,6 @@ package no.bachelor26.Tasks;
 
 import java.util.List;
 import java.util.Optional;
-// import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +53,7 @@ public class TaskService {
      * @param id ID-en til oppgaven som skal hentes
      * @return Det prosesserte innholdet til en oppgave og flagget
      */
-    public TaskComponents getAndProcessTaskComponents(Long id) throws TaskNotFoundException{
+    public TaskComponents getAndProcessTaskComponents(Integer id) throws TaskNotFoundException{
         RawTaskComponents rawTaskComponents = taskRepo.findTaskContentById(id).orElseThrow(
             () -> new TaskNotFoundException(id.toString())
         );
@@ -90,7 +89,7 @@ public class TaskService {
         GameMessage reply = new GameMessage(msg);
         Integer userID = userSession.getUserID();
 
-        List<Long> availableTaskIDs = taskAccessService.getAvailableTasks(userSession);
+        List<Integer> availableTaskIDs = taskAccessService.getAvailableTasks(userSession);
         reply.setData(
             objectMapper.valueToTree(
                 availableTaskIDs
@@ -117,14 +116,13 @@ public class TaskService {
             return;
         }
 
-        // Er innholdet en long?
         JsonNode content = msg.getData().get("taskID");
-        if(content == null || !content.canConvertToLong()){
+        if(content == null || !content.canConvertToInt()){
             sender.sendError(userID, reply, "invalid content");
             return;
         }
 
-        Integer taskID = content.asLong();
+        Integer taskID = content.asInt();
         if(!taskAccessService.userHasAccess(userSession, taskID)){
             System.out.println("INGEN TILGANG ;(");
             sender.sendError(userID, reply, "no access");
@@ -270,7 +268,7 @@ public class TaskService {
         String result = taskSessionService.validateFlag(userID, flag) ? "correct" : "wrong";
         if(result.equals("correct")){
 
-            Long unlockedID = taskSessionService.completeSession(userID);
+            Integer unlockedID = taskSessionService.completeSession(userID);
             if(unlockedID != null){     // Det er mulig at en oppgave ikke låser opp en annen
                 taskAccessService.grantUserAccess(userID, unlockedID);
             }

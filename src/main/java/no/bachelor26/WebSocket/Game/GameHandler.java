@@ -1,7 +1,5 @@
 package no.bachelor26.WebSocket.Game;
 
-import java.util.UUID;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

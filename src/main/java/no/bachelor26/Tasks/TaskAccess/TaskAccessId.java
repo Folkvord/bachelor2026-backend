@@ -4,13 +4,12 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
-// import java.util.UUID;
 
 @Data
 @Embeddable
 public class TaskAccessId implements Serializable {
 
-    @Column(name = "userID", columnDefinition = "uuid")
+    @Column(name = "userID")
     private Integer userID;
 
     @Column(name = "taskID")

@@ -14,7 +14,7 @@ public interface HintRepository extends JpaRepository<Hint, HintId> {
             h.hintMessage, h.id.index, h.cost
         )
         FROM Hint h
-        WHERE h.id.taskID = :taskId
+        WHERE h.id.taskID = :taskID
         ORDER BY h.id.index ASC
     """)
     List<HintDTO> findHintsByTaskId(Integer taskID);

@@ -2,7 +2,6 @@ package no.bachelor26.Tasks.TaskSessions;
 
 import java.time.LocalTime;
 import java.util.List;
-// import java.util.UUID;
 
 import lombok.Getter;
 import no.bachelor26.Tasks.DTO.TaskComponents;
@@ -22,7 +21,7 @@ public class TaskSession {
 
     private String flag;
     private List<HintDTO> hints;
-    private Long unlocksTaskID;
+    private Integer unlocksTaskID;
 
     public TaskSession(Integer userID, Integer taskID, TaskComponents taskComponents){
         this.userID = userID;

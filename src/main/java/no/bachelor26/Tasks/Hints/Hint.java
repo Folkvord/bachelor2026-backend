@@ -2,6 +2,7 @@ package no.bachelor26.Tasks.Hints;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import no.bachelor26.Tasks.Task;
 
 import java.time.Instant;
 
@@ -14,10 +15,10 @@ public class Hint {
     private HintId id;
 
     /* SOFIE: Setter slik at ikke et level har flere av hint 1, 2 og 3 */ 
-    @MapsId("taskID")
+/*     @MapsId("taskID")
     @ManyToOne(optional = false)
     @JoinColumn(name = "taskID", nullable = false)
-    private Task task;
+    private Task task; */
 
     @Column(name = "hintMessage", nullable = false)
     private String hintMessage;

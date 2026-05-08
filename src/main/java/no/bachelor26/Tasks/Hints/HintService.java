@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import no.bachelor26.Tasks.Task;
 import no.bachelor26.Tasks.DTO.TaskSeed;
 import no.bachelor26.Tasks.Hints.DTO.HintDTO;
 

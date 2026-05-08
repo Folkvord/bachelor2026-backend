@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import no.bachelor26.Tasks.DTO.RawTaskComponents;
 
-public interface TaskRepository extends JpaRepository<Task, Long>{
+public interface TaskRepository extends JpaRepository<Task, Integer>{
 
     @Query("""
         SELECT new no.bachelor26.Tasks.DTO.RawTaskComponents(
@@ -17,11 +17,11 @@ public interface TaskRepository extends JpaRepository<Task, Long>{
         FROM Task t
         WHERE t.id = :id
     """)
-    Optional<RawTaskComponents> findTaskContentById(Long id);
+    Optional<RawTaskComponents> findTaskContentById(Integer id);
 
     @Query("SELECT t.id FROM Task t")
-    List<Long> findAllIDs();
+    List<Integer> findAllIDs();
 
-    boolean existsById(Long id);
+    boolean existsById(Integer id);
 
 }

@@ -13,7 +13,7 @@ public interface TaskAccessRepository extends JpaRepository<TaskAccess, TaskAcce
         FROM TaskAccess t
         WHERE t.id.userID = :userID
     """)
-    public List<Long> findAllAccessableTasks(Integer userID);
+    public List<Integer> findAllAccessableTasks(Integer userID);
 
     public boolean existsByIdUserIDAndIdTaskID(Integer userID, Integer taskID);
 

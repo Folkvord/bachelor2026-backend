@@ -1,7 +1,6 @@
 package no.bachelor26.Tasks.TaskAccess;
 
 import java.util.List;
-// import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,7 @@ public class TaskAccessService {
     @Autowired TaskAccessRepository taskAccessRepo;
     @Autowired TaskRepository taskRepo;
 
-    private static final Long FIRST_TASK_ID = Long.valueOf(1);
+    private static final Integer FIRST_TASK_ID = Integer.valueOf(1);
 
 
     public boolean userHasAccess(Integer userID, Integer taskID){
@@ -34,7 +33,7 @@ public class TaskAccessService {
 
 
     
-    public List<Long> getAvailableTasks(UserSession user){
+    public List<Integer> getAvailableTasks(UserSession user){
         if(userHasSpecialAccess(user.getRole())){
             return taskRepo.findAllIDs();
         }
@@ -62,7 +61,7 @@ public class TaskAccessService {
     public void grantNewUserAccess(Integer userID){
         TaskAccess accessToken = new TaskAccess(userID, FIRST_TASK_ID);
         taskAccessRepo.save(accessToken);
-        accessToken = new TaskAccess(userID, Long.valueOf(0));
+        accessToken = new TaskAccess(userID, Integer.valueOf(0));
         taskAccessRepo.save(accessToken);
     }
 

@@ -14,10 +14,11 @@ public class Hint {
     private HintId id;
 
     /* SOFIE: Setter slik at ikke et level har flere av hint 1, 2 og 3 */ 
-/*     @ManyToOne(optional = false)
+    @MapsId("taskID")
+    @ManyToOne(optional = false)
     @JoinColumn(name = "taskID", nullable = false)
     private Task task;
- */
+
     @Column(name = "hintMessage", nullable = false)
     private String hintMessage;
 
@@ -30,7 +31,7 @@ public class Hint {
     @Column(name = "updatedAt")
     private Instant updatedAt;
 
-    public Hint(Long taskID, Short index){
+    public Hint(Integer taskID, Short index){
         id = new HintId(taskID, index);
     }
 

@@ -35,10 +35,10 @@ public class User {
     private Role role = Role.STUDENT;
     
     @Column(nullable = false, updatable = false)
-    private Instant createdAt = Instant.now();
+    private Instant createdAt;
 
     @Column(nullable = false)
-    private Instant updatedAt = Instant.now();
+    private Instant updatedAt;
 
     public enum Role {
         STUDENT,

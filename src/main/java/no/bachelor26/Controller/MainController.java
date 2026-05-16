@@ -15,4 +15,9 @@ public class MainController {
         return "index";
     }
 
+    @GetMapping("/game")
+    public String getGame(){
+        return "redirect:/game/index.html";
+    }
+
 }

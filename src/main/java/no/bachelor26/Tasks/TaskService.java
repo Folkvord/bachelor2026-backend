@@ -26,7 +26,7 @@ import tools.jackson.databind.exc.JsonNodeException;
 
 
 /**
- * Service-klassen som har ansvaret for oppgavene og oppgaveAPI-ene.
+ * Klassen som overser all samhandel med oppgaveløsningen.
  * 
  * @author Kristoffer Folkvord
  */
@@ -83,7 +83,7 @@ public class TaskService {
      * API-et for henting av oppgaveinformasjon.
      * SKAL RETURNERE ID-ENE TIL OPPGAVENE BRUKEREN HAR TILGANG TIL
      * 
-     * @param userID ID-en på klienten som kaller API-et
+     * @param userSession Brukersesjonsobjektet
      */
     public void respondToTaskInfo(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage(msg);
@@ -104,8 +104,8 @@ public class TaskService {
     /**
      * API-et for å hente innholdet til en oppgave.
      * 
-     * @param userID ID-en på klienten som kaller API-et
-     * @param data Innholdet til klientmeldingen
+     * @param userSession Brukersesjonsobjektet
+     * @param msg {@code GameMessage}
      */
     public void respondToTask(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage(msg);
@@ -164,8 +164,8 @@ public class TaskService {
     /**
      * API-et som responderer til parsestatusmeldingen sendt etter klienten parser oppgaven.
      * 
-     * @param userID ID-en på klienten som kaller API-et
-     * @param msg GameMessage
+     * @param userSession Brukersesjonsobjektet
+     * @param msg {@code GameMessage}
      */
     public void respondToParseStatus(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage(msg);
@@ -209,8 +209,8 @@ public class TaskService {
     /**
      * API-et for å avbryte en oppgavesesjon.
      * 
-     * @param userID ID-en på klienten som kaller API-et
-     * @param msg GameMessage
+     * @param userSession Brukersesjonsobjektet
+     * @param msg {@code GameMessage}
      */
     public void respondToCancelTask(UserSession userSession, GameMessage msg){
         Integer userID = userSession.getUserID();
@@ -240,8 +240,8 @@ public class TaskService {
     /**
      * API-et for å validere et flagg.
      * 
-     * @param userID ID-en på klienten som kaller API-et
-     * @param msg GameMessage
+     * @param userSession Brukersesjonsobjektet
+     * @param msg {@code GameMessage}
      */
     public void respondToValidateFlag(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage(msg);
@@ -290,7 +290,7 @@ public class TaskService {
      * Henter et hint til en bruker i en oppgavesesjon
      * 
      * @param userSession Spillerens tilstand
-     * @param msg GameMessage
+     * @param msg {@code GameMessage}
      */
     public void respondToGetHint(UserSession userSession, GameMessage msg){
         GameMessage reply = new GameMessage(msg);
@@ -407,9 +407,5 @@ public class TaskService {
     }
 
 
-
-    public void hardFlushAllTasks(){
-        taskRepo.deleteAll();
-    }
 
 }

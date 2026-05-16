@@ -2,6 +2,12 @@ package no.bachelor26.Tasks.Hints.DTO;
 
 import lombok.Data;
 
+/**
+ * Datastruktur som inneholder informasjon nødvendig
+ * for å jobber med hint.
+ * 
+ * @author Kristoffer Folkvord
+ */
 @Data
 public class HintDTO {
 

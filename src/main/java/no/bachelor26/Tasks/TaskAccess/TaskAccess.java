@@ -12,7 +12,9 @@ public class TaskAccess {
 
     @EmbeddedId
     private TaskAccessId id;
-/* 
+
+    // Kommentert ut for å unngå N+1 problemet
+    /*  
     // SOFIE: Kobler tilgang til en bruker /
     @ManyToOne(optional = false)
     @MapsId("userID")

@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import no.bachelor26.Tasks.Exception.NoTaskAccessException;
 import no.bachelor26.Tasks.Exception.TaskNotFoundException;
 import no.bachelor26.User.Exception.EmailInUseException;
 import no.bachelor26.User.Exception.UserInTaskSessionException;
@@ -45,17 +44,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(Map.of(
                 "cause", "Email in use",
-                "desc", ex.getMessage()
-            ));
-    }
-
-
-    // Når en bruker ikke har tilgang til en oppgave
-    @ExceptionHandler(NoTaskAccessException.class)
-    public ResponseEntity<?> handleNoTaskAccess(NoTaskAccessException ex){
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body(Map.of(
-                "cause", "No task access",
                 "desc", ex.getMessage()
             ));
     }

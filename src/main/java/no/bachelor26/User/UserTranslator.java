@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserTranslator implements UserDetailsService {
     
-    @Autowired
-    UserRepository userRepo;
+    @Autowired UserRepository userRepo;
+
 
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

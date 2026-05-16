@@ -28,8 +28,7 @@ public class TaskSessionService {
      * 
      * @param userID BrukerID-en
      * @param taskID OppgaveID-en
-     * @param flag Det flagget oppgaven kommer til å akseptere
-     * @param hints Listen over hintene brukeren kan få
+     * @param taskComponents Oppgavekomponentene
      */
     public boolean startTaskSession(
         Integer userID, Integer taskID, 
@@ -58,7 +57,8 @@ public class TaskSessionService {
      * Henter hintet som en {@code HintResult}.
      * Failer dersom hintet ikke eksisterer eller om det har blitt hentet før
      * 
-     * @param index Indeksen på hintet
+     * @param userID BrukerID-en
+     * @param index Hint-indekset
      * @return {@code HintResult} med en statusmelding og et hint om alt ok
      */
     public HintResult retrieveHint(Integer userID, int hintIndex){

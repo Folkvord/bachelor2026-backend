@@ -9,6 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Klassen som overser alle funksjonaliteter rundt brukere
+ * 
+ * @author Sofie Berglund
+ * @author Kristoffer Folkvord
+ */
 @Service
 public class UserService {
 
@@ -37,8 +43,6 @@ public class UserService {
      * @param email Eposten
      * @param password Passordet
      * @param passwordConfirm Passordet igjen
-     * @author Sofie Berglund
-     * @author Kristoffer Folkvord
      */
     public void registerUser(String username, String email, String password, String passwordConfirm){
 

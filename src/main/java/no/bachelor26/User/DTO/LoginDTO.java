@@ -1,5 +1,9 @@
 package no.bachelor26.User.DTO;
 
+
+/**
+ * Du vet 
+ */
 public class LoginDTO {
     private String username;
     private String password;

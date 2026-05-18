@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import no.bachelor26.User.DTO.RegisterUserDTO;
 
-
+/**
+ * HTTP-kontrolleren for brukerregistrering og autorisering
+ * 
+ * @author Kristoffer Folkvord
+ */
 @RestController
 @RequestMapping("/api/user")
 public class UserController {

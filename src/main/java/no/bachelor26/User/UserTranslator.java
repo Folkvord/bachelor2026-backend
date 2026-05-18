@@ -6,6 +6,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+
+/**
+ * Brukeroversetteren for Spring-security
+ * 
+ * @author Edwina Larsen
+ */
 @Component
 public class UserTranslator implements UserDetailsService {
     

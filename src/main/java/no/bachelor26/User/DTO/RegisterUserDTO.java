@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import no.bachelor26.Annotation.FieldMatch;
 
+/**
+ * Du vet
+ */
 @Data
 @FieldMatch(first = "password", second = "passwordConfirm")
 public class RegisterUserDTO {

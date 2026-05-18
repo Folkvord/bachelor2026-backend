@@ -3,6 +3,12 @@ package no.bachelor26.User.UserSessions;
 import lombok.Data;
 import no.bachelor26.User.User;
 
+/**
+ * En POJO som inneholder all nødvendig informasjon 
+ * om en aktiv brukers sesjon.
+ * 
+ * @author Kristoffer Folkvord
+ */
 @Data
 public class UserSession {
     

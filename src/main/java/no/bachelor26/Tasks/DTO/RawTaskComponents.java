@@ -1,7 +1,6 @@
 package no.bachelor26.Tasks.DTO;
 
 import lombok.Data;
-import no.bachelor26.Tasks.JSON.TaskData;
 
 /**
  * En POJO for å hente ut de nødvendige komponentene 

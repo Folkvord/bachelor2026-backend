@@ -1,4 +1,4 @@
-package no.bachelor26.Tasks.JSON;
+package no.bachelor26.Tasks.DTO;
 
 import java.util.Map;
 

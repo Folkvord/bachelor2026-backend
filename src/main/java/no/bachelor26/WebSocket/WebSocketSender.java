@@ -17,7 +17,11 @@ import no.bachelor26.WebSocket.Exception.UnexpectedSessionShutdownException;
 import no.bachelor26.WebSocket.Game.GameMessage;
 import tools.jackson.databind.ObjectMapper;
 
-
+/**
+ * Klassen som håndterer sendingen av websocketmeldinger
+ * 
+ * @author Kristoffer Folkvord
+ */
 @Service
 public class WebSocketSender {
 

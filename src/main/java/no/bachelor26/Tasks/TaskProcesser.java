@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import no.bachelor26.Tasks.DTO.TaskComponents;
+import no.bachelor26.Tasks.DTO.TaskData;
 import no.bachelor26.Tasks.Hints.DTO.HintDTO;
-import no.bachelor26.Tasks.JSON.TaskData;
 import tools.jackson.databind.ObjectMapper;
 
 

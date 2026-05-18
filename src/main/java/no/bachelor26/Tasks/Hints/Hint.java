@@ -14,6 +14,7 @@ public class Hint {
     @EmbeddedId
     private HintId id;
 
+    // Kommentert ut for å løse N+1
     /* SOFIE: Setter slik at ikke et level har flere av hint 1, 2 og 3 */ 
 /*     @MapsId("taskID")
     @ManyToOne(optional = false)

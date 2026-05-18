@@ -27,7 +27,7 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 
 /**
- * Klassen som initialiserer data ved hver oppstart
+ * Klassen som initialiserer data ved oppstart
  * 
  * @author Kristoffer Folkvord
  */

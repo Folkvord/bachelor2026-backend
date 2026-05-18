@@ -9,7 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
-import no.bachelor26.Tasks.JSON.TaskData;
+import no.bachelor26.Tasks.DTO.TaskData;
 
 @Data
 @Entity

@@ -14,6 +14,11 @@ import no.bachelor26.Tasks.Task;
 import no.bachelor26.Tasks.DTO.TaskSeed;
 import no.bachelor26.Tasks.Hints.DTO.HintDTO;
 
+/**
+ * Klassen som overser alle funksjonaliteter rundt hint
+ * 
+ * @author Kristoffer Folkvord
+ */
 @Service
 public class HintService {
 
@@ -98,10 +103,5 @@ public class HintService {
 
     }
 
-
-
-    public void hardFlushAllHints(){
-        hintRepo.deleteAll();
-    }
 
 }

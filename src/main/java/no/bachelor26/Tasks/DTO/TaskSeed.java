@@ -7,7 +7,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import no.bachelor26.Tasks.Hints.DTO.HintDTO;
-import no.bachelor26.Tasks.JSON.TaskData;
 
 /**
  * En klasse som representerer et frø skapt fra en oppgavefil.

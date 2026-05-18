@@ -4,7 +4,6 @@ import java.util.List;
 
 import lombok.Data;
 import no.bachelor26.Tasks.Hints.DTO.HintDTO;
-import no.bachelor26.Tasks.JSON.TaskData;
 
 /**
  * En POJO som inneholder alle komponentene

@@ -15,28 +15,21 @@ import lombok.Data;
  * @author Sofie Emmelin Weber 
  */
 
-// SOFIE: markerer User klassen som en JPA entitet
 @Entity
-// SOFIE: Settere og gettere
 @Data
 @Table(name="users")
 
 public class User {
-    // SOFIE: id som primærnøkkel
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // SOFIE: brukernavn kan ikke være tom, må være unik, makslengde 25 tegn
     @Column(nullable=false,unique=true, length = 25)
     private String username; 
 
-    // SOFIE: email kan ikke være tom, må være unik, makslengde 100 tegn
     @Column(nullable=false,unique=true, length = 100)
     private String email;
 
-    // SOFIE: passord lagres i hashformet, og kan ikke være null, 
-    // og makslengde på 100 tegn
     @Column(nullable=false, length = 100)
     private String passwordHash;
 

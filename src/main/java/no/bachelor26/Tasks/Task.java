@@ -19,7 +19,7 @@ public class Task {
     @Id
     private Integer id;    // Vi skal ikke generere denne, den settes i oppgavefilene
 
-    @Column // (nullable = true) dette er default? så ikke nødvendig   // Testoppgaver / den siste oppgaven
+    @Column
     private Integer unlocksTaskID;
     
     @Column(nullable = true)        // For de oppgavene som har et statisk flagg

@@ -5,6 +5,17 @@ import lombok.Data;
 
 import java.time.Instant;
 
+/**
+ * Entitet for tabellen user_task_access
+ * 
+ * Representerer tilgang mellom en bruker og en oppgave.
+ * 
+ * Entiteten brukes til å registrere hvilke oppgaver en bruker
+ * har låst opp, og har tilgang til.
+ *  
+ * @author Sofie Emmelin Weber 
+ */
+
 @Data
 @Entity
 @Table(name = "user_task_access")

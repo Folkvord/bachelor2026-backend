@@ -4,6 +4,20 @@ import jakarta.persistence.*;
 import java.time.Instant;
 import lombok.Data;
 
+/**
+ * Brukerentitet for brukertabellen.
+ * Representeren én bruker i systemet. 
+ * 
+ * Ansvar:
+ * Lagre brukerinformasjon
+ * Autentisering 
+ * 
+ * Lagrer epostadresse, brukernavn, rolle, tidstempler
+ * og brukerens passord i form av hash.
+ *  
+ * @author Sofie Emmelin Weber 
+ */
+
 // SOFIE: markerer User klassen som en JPA entitet
 @Entity
 // SOFIE: Settere og gettere
@@ -11,7 +25,7 @@ import lombok.Data;
 @Table(name="users")
 
 public class User {
-    // SOFIE: Designerer id som primærnøkkel
+    // SOFIE: id som primærnøkkel
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

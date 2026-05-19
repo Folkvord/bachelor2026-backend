@@ -5,6 +5,15 @@ import java.io.Serializable;
 import jakarta.persistence.Column;
 import lombok.Data;
 
+
+/**
+ * HintID for hintentitet.
+ * 
+ * Danner primærnøkkelen for entiteten
+ *  
+ * @author Sofie Emmelin Weber 
+ */
+
 @Data
 public class HintId implements Serializable {
     

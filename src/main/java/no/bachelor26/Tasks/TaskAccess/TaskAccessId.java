@@ -5,6 +5,14 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * Primørnøkkel for entiteten user_tasl_access
+ * 
+ * Sammensatt nøkkel fra userID og taskID
+ *  
+ * @author Sofie Emmelin Weber 
+ */
+
 @Data
 @Embeddable
 public class TaskAccessId implements Serializable {

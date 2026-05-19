@@ -12,9 +12,6 @@ import lombok.Data;
  * Lagre brukerinformasjon
  * Autentisering 
  * 
- * Lagrer epostadresse, brukernavn, rolle, tidstempler
- * og brukerens passord i form av hash.
- *  
  * @author Sofie Emmelin Weber 
  */
 

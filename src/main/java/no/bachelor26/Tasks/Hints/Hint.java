@@ -6,6 +6,15 @@ import no.bachelor26.Tasks.Task;
 
 import java.time.Instant;
 
+
+/**
+ * Hintentitet for hinttabellen.
+ * 
+ * Representerer et hint tilknyttet en oppgave i systemet.
+ *  
+ * @author Sofie Emmelin Weber 
+ */
+
 @Data
 @Entity
 @Table(name = "hints")

@@ -13,7 +13,7 @@ import no.bachelor26.Filter.JwtAuthenticationFilter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.http.SessionCreationPolicy;
-
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer; //adda
 /**
  * Konfigurasjon av Spring Security.
  *
@@ -54,9 +54,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable());/* 
+                .csrf(AbstractHttpConfigurer::disable);/*
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        //.csrf(csrf -> csrf.disable())
+                        //.sessionManagement(session ->
+                        //        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
@@ -64,7 +69,7 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/health").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); */
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);*/
         return http.build();
     }
 

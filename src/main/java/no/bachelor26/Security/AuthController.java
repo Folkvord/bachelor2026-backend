@@ -33,9 +33,13 @@ public class AuthController {
      *
      * @param loginDTO inneholder brukernavn + passord
      * @return JWT token hvis autentisering lykkes
+     *
+     * @author Edwina Larsen
      */
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO loginDTO) {
+
+        System.out.println("LOGIN ATTEMPT: " + loginDTO.getUsername());
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -43,6 +47,7 @@ public class AuthController {
                         loginDTO.getPassword()
                 )
         );
+        System.out.println("AUTH SUCCESS");
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtService.generateToken(userDetails);

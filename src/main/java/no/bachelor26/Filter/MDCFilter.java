@@ -12,10 +12,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-/* 
- * Et filter som legger til en traceID, 
- * HTTP-metoden og URI-en til en 
- * innkommende forespørsel 
+/**
+ * Et filter som legger til en traceID, HTTP-metoden og 
+ * URI-en til en innkommende forespørsel.
+ * Knyttes til loggingen.
+ * 
+ * @author Kristoffer Folkvord
  */
 
 @Component

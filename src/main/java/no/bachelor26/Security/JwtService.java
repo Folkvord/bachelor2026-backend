@@ -12,7 +12,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-
+import org.springframework.beans.factory.annotation.Value;
 /**
  * Tjeneste for håndtering av JWT (JSON Web Tokens)
  *!!!SECRET_KEY er hardkoda, må endres!!!
@@ -27,13 +27,15 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 //midlertidig SECRET_KEY, skal legges i miljø
-    private static final String SECRET_KEY =
-            "VGhpc0lzQVN1cGVyTG9uZ1NlY3JldEtleUZvckpXVFRlc3RpbmcxMjM0NTY3ODkw";
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     private static final long JWT_EXPIRATION_MS = 1000 * 60 * 60 * 24;
 
     private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        System.out.println("JWT SECRET: " + secretKey);
+
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

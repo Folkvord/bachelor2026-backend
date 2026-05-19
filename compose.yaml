@@ -23,7 +23,7 @@ services:
       DB_DRIVER_URL: jdbc:postgresql://postgres:5432/${DB_NAME}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
-
+      JWT_SECRET: ${JWT_SECRET}
 
 volumes:
   postgres_data:

@@ -25,6 +25,8 @@ import no.bachelor26.User.UserTranslator;
  * Setter autentisert bruker i SecurityContext
  *
  * Gjør det mulig å bruke JWT for autentisering uten sessions.
+ *
+ * @author Edwina Larsen
  */
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -46,9 +48,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
         throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
-
+        String path = request.getServletPath();
+        System.out.println("JWT filter path: " + request.getServletPath());
+        if (path.equals("/api/auth/login") || path.equals("/api/user/register")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         //ingen bearer token -> fortsette uten autentisering
+        final String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;

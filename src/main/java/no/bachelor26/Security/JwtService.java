@@ -33,7 +33,6 @@ public class JwtService {
     private static final long JWT_EXPIRATION_MS = 1000 * 60 * 60 * 24;
 
     private SecretKey getSigningKey() {
-        System.out.println("JWT SECRET: " + secretKey);
 
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
